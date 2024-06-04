@@ -1,0 +1,11 @@
+{
+  "name": "glm-dental-education-backend",
+  "version": "1.0.0",
+  "description": "Backend for GLM Dental Education Project",
+  "main": "index.js",
+  "author": "Victor Tran",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
