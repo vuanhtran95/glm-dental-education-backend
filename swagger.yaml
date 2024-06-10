@@ -1,0 +1,81 @@
+swagger: '2.0'
+info:
+  description: 'This is a user authentication API.'
+  version: '1.0.0'
+  title: 'User Auth API'
+host: 'localhost:3000'
+basePath: '/'
+schemes:
+  - 'http'
+consumes:
+  - 'application/json'
+produces:
+  - 'application/json'
+
+paths:
+  /register:
+    post:
+      summary: 'Register a new user'
+      description: 'This endpoint registers a new user with a username and password.'
+      parameters:
+        - in: 'body'
+          name: 'user'
+          description: 'User to register'
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        201:
+          description: 'User registered successfully'
+        400:
+          description: 'Invalid input'
+
+  /login:
+    post:
+      summary: 'Logs in a user'
+      description: 'This endpoint authenticates a user by username and password.'
+      parameters:
+        - in: 'body'
+          name: 'credentials'
+          description: 'User login credentials'
+          required: true
+          schema:
+            $ref: '#/definitions/Credentials'
+      responses:
+        200:
+          description: 'Login successful'
+          schema:
+            $ref: '#/definitions/TokenResponse'
+        401:
+          description: 'Invalid login credentials'
+        500:
+          description: 'Internal server error'
+
+definitions:
+  User:
+    type: 'object'
+    required:
+      - 'username'
+      - 'password'
+    properties:
+      username:
+        type: 'string'
+      password:
+        type: 'string'
+
+  Credentials:
+    type: 'object'
+    required:
+      - 'username'
+      - 'password'
+    properties:
+      username:
+        type: 'string'
+      password:
+        type: 'string'
+
+  TokenResponse:
+    type: 'object'
+    properties:
+      token:
+        type: 'string'
