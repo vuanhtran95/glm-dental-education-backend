@@ -1,9 +1,7 @@
-import express, { Express, Request, Response } from 'express';
-import accountRoutes from './routes/accountRoute';
-import appRouters from './routes/appRoute';
-
+import express, { Express } from 'express';
 import connectMongoDb from './config/database';
 import env from './config/env';
+import { scenarioRoute, userRoute, accountRoute, appRoute } from './routes';
 
 const app: Express = express();
 
@@ -20,5 +18,7 @@ app.listen(env.port, () => {
 });
 
 // User
-app.use('/api/accounts', accountRoutes);
-app.use('/', appRouters);
+app.use('/api/accounts', accountRoute);
+app.use('/api/users', userRoute);
+app.use('/api/scenarios', scenarioRoute);
+app.use('/', appRoute);

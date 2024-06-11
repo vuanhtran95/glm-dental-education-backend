@@ -1,5 +1,6 @@
-import mongoose, { Schema } from 'mongoose';
-import { IUser } from '../types/account';
+import mongoose, { Error, Schema } from 'mongoose';
+import { ERole, IUser } from '../types/user';
+import Account from './account';
 
 const userSchema: Schema = new Schema<IUser>({
   accountId: {
@@ -9,6 +10,7 @@ const userSchema: Schema = new Schema<IUser>({
   role: {
     type: String,
     required: true,
+    enum: ERole,
   },
   fullName: {
     type: String,
@@ -17,8 +19,13 @@ const userSchema: Schema = new Schema<IUser>({
 });
 
 userSchema.pre<IUser>('save', async function (next) {
-  next();
+  try {
+    Account.findById(this.accountId);
+    next();
+  } catch (error) {
+    console.error(error);
+  }
 });
 
-const Account = mongoose.model<IUser>('User', userSchema);
-export default Account;
+const User = mongoose.model<IUser>('User', userSchema);
+export default User;
