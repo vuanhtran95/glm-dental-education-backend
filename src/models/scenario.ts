@@ -4,7 +4,11 @@ import { IScenario, ISymptom } from '../types/scenario';
 const symptomSchema: Schema = new Schema<ISymptom>({
   name: {
     type: String,
-    description: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
   },
 });
 
