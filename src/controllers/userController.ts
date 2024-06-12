@@ -4,6 +4,7 @@ import { MongoServerError } from 'mongodb';
 import Account from '../models/account';
 import env from '../config/env';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { ERROR_RESPONSE } from '../constants';
 
 export const userCreate = async (
   req: Request,
@@ -36,9 +37,12 @@ export const userCreate = async (
 };
 
 export const userGet = async (req: Request, res: Response): Promise<void> => {
-  if (req.headers && req.headers.authorization) {
-    let authorization = req.headers.authorization;
-    jwt.verify(authorization, env.jwtSecret, async (err, decoded) => {
+  const authorizationHeader = req.header('Authorization');
+
+  const token = authorizationHeader?.replace('Bearer ', '');
+
+  if (!!token) {
+    jwt.verify(token, env.jwtSecret, async (err, decoded) => {
       if (err && !decoded) {
         return res.sendStatus(403);
       }
@@ -61,5 +65,5 @@ export const userGet = async (req: Request, res: Response): Promise<void> => {
     });
     return;
   }
-  res.send(500);
+  res.send(400).json(ERROR_RESPONSE.INVALID_TOKEN);
 };
