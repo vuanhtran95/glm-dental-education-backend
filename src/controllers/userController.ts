@@ -54,13 +54,11 @@ export const userGet = async (req: Request, res: Response): Promise<void> => {
           accountId: decodedData?._id as string,
         });
         if (!user) {
-          return res.sendStatus(404);
+          return res.sendStatus(404).json(ERROR_RESPONSE.RECORD_NOT_FOUND);
         }
         res.status(200).json(user);
       } catch (error) {
-        res
-          .status(500)
-          .json({ error: 'An error occurred while retrieving the user' });
+        res.status(500).json(ERROR_RESPONSE.RECORD_NOT_FOUND);
       }
     });
     return;

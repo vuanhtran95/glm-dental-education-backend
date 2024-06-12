@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { MongoServerError } from 'mongodb';
 import Scenario from '../models/scenario';
+import { ERROR_RESPONSE } from '../constants';
 
 export const scenarioCreate = async (
   req: Request,
@@ -30,7 +31,7 @@ export const scenarioGet = async (
   res: Response
 ): Promise<void> => {
   const { id } = req.params;
-  if (!id) res.status(400).json({ error: 'Id not found' });
+  if (!id) res.status(400).json(ERROR_RESPONSE.RECORD_NOT_FOUND);
 
   try {
     const scenario = await Scenario.findById(id);

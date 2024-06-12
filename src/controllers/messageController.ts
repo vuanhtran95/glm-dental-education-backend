@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { MongoServerError } from 'mongodb';
 import { Message } from '../models';
+import { ERROR_RESPONSE } from '../constants';
 
 export const messageCreate = async (
   req: Request,
@@ -18,7 +19,6 @@ export const messageCreate = async (
     const savedMessage = await message.save();
     res.status(201).json(savedMessage);
   } catch (err) {
-    const error = err as MongoServerError;
-    res.status(400).json({ error: error.errmsg });
+    res.status(400).json(ERROR_RESPONSE.SERVER_ERROR);
   }
 };
