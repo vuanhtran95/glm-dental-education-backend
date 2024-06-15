@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import User from '../models/user';
+import User from '../models/users';
 import { MongoServerError } from 'mongodb';
 import Account from '../models/account';
 import env from '../config/env';
