@@ -1,4 +1,4 @@
-import mongoose, { Error, Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { ERole, IUser } from '../types/user';
 import Account from './account';
 
