@@ -1,4 +1,6 @@
 import express, { Express } from 'express';
+
+import cors from 'cors';
 import connectMongoDb from './config/database';
 import env from './config/env';
 import {
@@ -11,6 +13,9 @@ import {
 } from './routes';
 
 const app: Express = express();
+
+// CORS config
+app.use(cors());
 
 // Parses incoming requests with JSON payloads
 app.use(express.json());

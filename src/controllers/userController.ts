@@ -37,6 +37,8 @@ export const userCreate = async (
 };
 
 export const userGet = async (req: Request, res: Response): Promise<void> => {
+  console.log(req.header('Authorization'), 'req');
+
   const authorizationHeader = req.header('Authorization');
 
   const token = authorizationHeader?.replace('Bearer ', '');
@@ -44,7 +46,8 @@ export const userGet = async (req: Request, res: Response): Promise<void> => {
   if (!!token) {
     jwt.verify(token, env.jwtSecret, async (err, decoded) => {
       if (err && !decoded) {
-        return res.sendStatus(403);
+        res.status(403);
+        return;
       }
 
       const decodedData = decoded as JwtPayload;
@@ -54,14 +57,18 @@ export const userGet = async (req: Request, res: Response): Promise<void> => {
           accountId: decodedData?._id as string,
         });
         if (!user) {
-          return res.sendStatus(404).json(ERROR_RESPONSE.RECORD_NOT_FOUND);
+          res.status(404).json(ERROR_RESPONSE.RECORD_NOT_FOUND);
+          return;
         }
-        res.status(200).json(user);
+        res.status(200).json({ user: user });
+        return;
       } catch (error) {
         res.status(500).json(ERROR_RESPONSE.RECORD_NOT_FOUND);
+        return;
       }
     });
     return;
   }
   res.send(400).json(ERROR_RESPONSE.INVALID_TOKEN);
+  return;
 };
