@@ -23,7 +23,26 @@ export const dialogCreate = async (
   }
 };
 
-export const dialogGet = async (req: Request, res: Response): Promise<void> => {
+export const dialogGetList = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { user_id: userId } = req.query;
+  if (!userId) res.status(400).json({ error: 'Id not found' });
+
+  try {
+    const dialog = await Dialog.find({ createdUserId: userId });
+    res.status(200).json({ dialog });
+  } catch (err) {
+    const error = err as MongoServerError;
+    res.status(400).json({ error: error.errmsg });
+  }
+};
+
+export const dialogGetDetail = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { id } = req.params;
   if (!id) res.status(400).json({ error: 'Id not found' });
 
