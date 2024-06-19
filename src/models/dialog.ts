@@ -2,6 +2,10 @@ import mongoose, { Schema } from 'mongoose';
 import { IDialog } from '../types/dialog';
 
 const dialogSchema: Schema = new Schema<IDialog>({
+  name: {
+    type: String,
+    required: true,
+  },
   createdUserId: {
     type: String,
     required: true,

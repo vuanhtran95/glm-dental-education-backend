@@ -7,12 +7,13 @@ export const dialogCreate = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { createdUserId, scenarioId } = req.body;
+  const { createdUserId, scenarioId, name } = req.body;
 
   try {
     const dialog = new Dialog({
       createdUserId,
       scenarioId,
+      name,
     });
 
     const savedDialog = await dialog.save();
@@ -31,8 +32,8 @@ export const dialogGetList = async (
   if (!userId) res.status(400).json({ error: 'Id not found' });
 
   try {
-    const dialog = await Dialog.find({ createdUserId: userId });
-    res.status(200).json({ dialog });
+    const dialogs = await Dialog.find({ createdUserId: userId });
+    res.status(200).json({ dialogs });
   } catch (err) {
     const error = err as MongoServerError;
     res.status(400).json({ error: error.errmsg });
@@ -49,7 +50,7 @@ export const dialogGetDetail = async (
   try {
     const dialog = await Dialog.findById(id);
     const messages = await Message.find({ dialogId: id });
-    res.status(200).json({ dialog, messages });
+    res.status(200).json({ detail: { dialog, messages } });
   } catch (err) {
     const error = err as MongoServerError;
     res.status(400).json({ error: error.errmsg });
