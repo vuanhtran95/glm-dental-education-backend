@@ -1,6 +1,9 @@
+import { Types } from 'mongoose';
+
 export interface IDialog {
-  createdUserId: string;
-  scenarioId: string;
+  name: string;
+  createdUserId: Types.ObjectId;
+  scenarioId: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;

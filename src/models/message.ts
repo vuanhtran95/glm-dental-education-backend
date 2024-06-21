@@ -16,7 +16,7 @@ const messageSchema: Schema = new Schema<IMessage>({
     default: Date.now(),
   },
   dialogId: {
-    type: String,
+    type: Schema.Types.ObjectId,
     required: true,
   },
 });

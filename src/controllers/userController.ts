@@ -17,8 +17,6 @@ export const userCreate = async (
     await Account.findById(accountId);
   } catch (err) {
     const error = err as MongoServerError;
-    console.log(error);
-
     res.status(400).json({ error: 'Account Id is invalid' });
     return;
   }
@@ -37,8 +35,6 @@ export const userCreate = async (
 };
 
 export const userGet = async (req: Request, res: Response): Promise<void> => {
-  console.log(req.header('Authorization'), 'req');
-
   const authorizationHeader = req.header('Authorization');
 
   const token = authorizationHeader?.replace('Bearer ', '');

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { MongoServerError } from 'mongodb';
 import Dialog from '../models/dialog';
-import { Message } from '../models';
+import { Message, Scenario } from '../models';
 
 export const dialogCreate = async (
   req: Request,
@@ -32,7 +32,9 @@ export const dialogGetList = async (
   if (!userId) res.status(400).json({ error: 'Id not found' });
 
   try {
-    const dialogs = await Dialog.find({ createdUserId: userId });
+    const dialogs = await Dialog.find({ createdUserId: userId })
+      .populate('scenarioId')
+      .exec();
     res.status(200).json({ dialogs });
   } catch (err) {
     const error = err as MongoServerError;
@@ -49,8 +51,9 @@ export const dialogGetDetail = async (
 
   try {
     const dialog = await Dialog.findById(id);
+    const scenario = await Scenario.findById(dialog?.scenarioId);
     const messages = await Message.find({ dialogId: id });
-    res.status(200).json({ detail: { dialog, messages } });
+    res.status(200).json({ detail: { dialog, messages, scenario } });
   } catch (err) {
     const error = err as MongoServerError;
     res.status(400).json({ error: error.errmsg });

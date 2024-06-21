@@ -9,8 +9,6 @@ router.get('/', (req: Request, res: Response) =>
   authenticationMiddleware(req, res, () => userGet(req, res))
 );
 
-router.post('/', (req: Request, res: Response) =>
-  authenticationMiddleware(req, res, () => userCreate(req, res))
-);
+router.post('/', (req: Request, res: Response) => userCreate(req, res));
 
 export default router;

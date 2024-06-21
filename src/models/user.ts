@@ -4,7 +4,7 @@ import Account from './account';
 
 const userSchema: Schema = new Schema<IUser>({
   accountId: {
-    type: String,
+    type: Schema.Types.ObjectId,
     required: true,
   },
   role: {

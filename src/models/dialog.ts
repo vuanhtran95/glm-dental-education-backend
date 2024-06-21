@@ -7,10 +7,13 @@ const dialogSchema: Schema = new Schema<IDialog>({
     required: true,
   },
   createdUserId: {
-    type: String,
+    type: Schema.Types.ObjectId,
     required: true,
   },
-  scenarioId: String,
+  scenarioId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

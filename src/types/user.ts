@@ -1,3 +1,5 @@
+import { Types } from 'mongoose';
+
 export enum ERole {
   STUDENT = 'student',
   SUPERVISOR = 'supervisor',
@@ -5,7 +7,7 @@ export enum ERole {
 }
 
 export interface IUser extends Document {
-  accountId: string;
+  accountId: Types.ObjectId;
   role: ERole;
   fullName: string;
 }

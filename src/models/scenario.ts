@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Types } from 'mongoose';
 import { IScenario, ISymptom } from '../types/scenario';
 
 const symptomSchema: Schema = new Schema<ISymptom>({
@@ -13,6 +13,10 @@ const symptomSchema: Schema = new Schema<ISymptom>({
 });
 
 const scenarioSchema: Schema = new Schema<IScenario>({
+  name: {
+    type: String,
+    required: true,
+  },
   patientName: {
     type: String,
     required: true,
@@ -35,7 +39,7 @@ const scenarioSchema: Schema = new Schema<IScenario>({
     default: false,
   },
   createdUserId: {
-    type: String,
+    type: Schema.Types.ObjectId,
     required: true,
   },
 });
