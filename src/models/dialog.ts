@@ -26,6 +26,10 @@ const dialogSchema: Schema = new Schema<IDialog>({
     type: Boolean,
     default: false,
   },
+  isSubmitted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 dialogSchema.pre<IDialog>('save', async function (next) {

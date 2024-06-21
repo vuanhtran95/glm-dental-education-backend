@@ -4,7 +4,7 @@ import { EMessageRole, IMessage } from '../types/message';
 const messageSchema: Schema = new Schema<IMessage>({
   role: {
     type: String,
-    required: true,
+    default: EMessageRole.USER,
     enum: EMessageRole,
   },
   content: {

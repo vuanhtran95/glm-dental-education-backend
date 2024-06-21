@@ -7,17 +7,16 @@ export const messageCreate = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { role, content, dialogId } = req.body;
+  const { content, dialogId } = req.body;
 
   try {
-    const message = new Message({
-      role,
+    const newMessage = new Message({
       content,
       dialogId,
     });
 
-    const savedMessage = await message.save();
-    res.status(201).json(savedMessage);
+    const message = await newMessage.save();
+    res.status(201).json({ message });
   } catch (err) {
     res.status(400).json(ERROR_RESPONSE.SERVER_ERROR);
   }

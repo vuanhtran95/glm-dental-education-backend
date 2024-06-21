@@ -7,4 +7,5 @@ export interface IDialog {
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
+  isSubmitted: boolean;
 }
