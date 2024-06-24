@@ -22,7 +22,7 @@ export const buildDialogContext = ({
       !!additionalInformation &&
       `Your Additional Information: ${additionalInformation}\n`
     }
-    ${!!communicationStyle && `You are an: ${communicationStyle} person\n`}
+    Please, just answer concisely user question!!!
   `;
 };
 
