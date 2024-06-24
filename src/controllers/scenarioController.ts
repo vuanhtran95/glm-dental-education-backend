@@ -47,7 +47,7 @@ export const scenarioGetList = async (
   res: Response
 ): Promise<void> => {
   try {
-    const scenarios = await Scenario.find();
+    const scenarios = await Scenario.find().sort({ updatedAt: 'desc' });
     res.status(200).json({ scenarios });
   } catch (err) {
     const error = err as MongoServerError;
