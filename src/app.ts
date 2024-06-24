@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import ip from 'ip';
 
 import cors from 'cors';
 import connectMongoDb from './config/database';
@@ -14,6 +15,8 @@ import {
 
 const app: Express = express();
 
+const ipAddress = ip.address();
+
 // CORS config
 app.use(cors());
 
@@ -26,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 connectMongoDb();
 
 app.listen(env.port, () => {
-  console.log(`Example app listening on port ${env.port}`);
+  console.log(`Example app listening on IP: ${ipAddress} Port:${env.port}`);
 });
 
 // User
