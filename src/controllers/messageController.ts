@@ -1,23 +1,49 @@
 import { Request, Response } from 'express';
-import { MongoServerError } from 'mongodb';
 import { Message } from '../models';
 import { ERROR_RESPONSE } from '../constants';
+import { EMessageRole, IMessage, LlamaMessage } from '../types/message';
+import axios from 'axios';
+import env from '../config/env';
+import { removeTextInsideAsterisks } from '../utils';
 
 export const messageCreate = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { content, dialogId } = req.body;
+  const { content, dialogId, role } = req.body;
 
   try {
-    const newMessage = new Message({
+    const message = new Message({
       content,
       dialogId,
+      role,
     });
+    await message.save();
 
-    const message = await newMessage.save();
-    res.status(201).json({ message });
+    res.status(201).json({});
   } catch (err) {
     res.status(400).json(ERROR_RESPONSE.SERVER_ERROR);
+  }
+};
+
+export const callToLlama2 = async (messages: LlamaMessage[]) => {
+  try {
+    const response = await axios.post(
+      `${env.llamaApi}process_message`,
+      {
+        history: messages,
+      },
+      {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      }
+    );
+
+    return removeTextInsideAsterisks(response.data as string);
+  } catch (err) {
+    console.log(err, 'errrrrrrr');
   }
 };

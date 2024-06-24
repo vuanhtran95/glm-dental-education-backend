@@ -7,15 +7,31 @@ export const scenarioCreate = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { patientName, age, symptoms, createdUserId, name } = req.body;
+  const {
+    patientName,
+    age,
+    symptoms,
+    lifeStyle,
+    additionalInformation,
+    createdUserId,
+    name,
+    gender,
+    medicalHistory,
+    communicationStyle,
+  } = req.body;
 
   try {
     const scenario = new Scenario({
+      name,
       patientName,
       age,
+      gender,
+      medicalHistory,
       symptoms,
+      lifeStyle,
+      additionalInformation,
+      communicationStyle,
       createdUserId,
-      name,
     });
 
     const savedScenario = await scenario.save();
@@ -51,6 +67,7 @@ export const scenarioGetDetail = async (
     res.status(200).json(scenario);
   } catch (err) {
     const error = err as MongoServerError;
+
     res.status(400).json({ error: error.errmsg });
   }
 };

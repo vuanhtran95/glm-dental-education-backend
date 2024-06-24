@@ -1,16 +1,6 @@
 import mongoose, { Schema, Types } from 'mongoose';
-import { IScenario, ISymptom } from '../types/scenario';
-
-const symptomSchema: Schema = new Schema<ISymptom>({
-  name: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-});
+import { IScenario } from '../types/scenario';
+import { IGender } from '../types/user';
 
 const scenarioSchema: Schema = new Schema<IScenario>({
   name: {
@@ -23,9 +13,33 @@ const scenarioSchema: Schema = new Schema<IScenario>({
   },
   age: {
     type: Number,
+    required: true,
+  },
+  communicationStyle: {
+    type: String,
+    required: true,
+  },
+  gender: {
+    type: String,
+    required: true,
+    enum: IGender,
+  },
+  medicalHistory: {
+    type: String,
+    required: true,
+  },
+  symptoms: {
+    type: String,
+    required: true,
+  },
+  lifeStyle: {
+    type: String,
+    required: true,
+  },
+  additionalInformation: {
+    type: String,
     required: false,
   },
-  symptoms: [symptomSchema],
   createdAt: {
     type: Date,
     default: Date.now,

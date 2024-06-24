@@ -6,6 +6,11 @@ export enum ERole {
   ADMIN = 'admin',
 }
 
+export enum IGender {
+  MALE = 'male',
+  FEMALE = 'female',
+}
+
 export interface IUser extends Document {
   accountId: Types.ObjectId;
   role: ERole;

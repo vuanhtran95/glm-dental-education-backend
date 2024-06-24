@@ -1,15 +1,16 @@
 import { Types } from 'mongoose';
-
-export interface ISymptom {
-  name: string;
-  description: string;
-}
+import { IGender } from './user';
 
 export interface IScenario extends Document {
   name: string;
   patientName: string;
+  communicationStyle: string;
   age: number;
-  symptoms: ISymptom[];
+  gender: IGender;
+  medicalHistory: string;
+  symptoms: string;
+  lifeStyle: string;
+  additionalInformation: string;
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;

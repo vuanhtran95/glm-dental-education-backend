@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import { MongoServerError } from 'mongodb';
 import Dialog from '../models/dialog';
 import { Message, Scenario } from '../models';
+import { EMessageRole } from '../types/message';
+import { buildDialogContext } from '../utils';
+import { IScenario } from '../types/scenario';
 
 export const dialogCreate = async (
   req: Request,
@@ -17,6 +20,17 @@ export const dialogCreate = async (
     });
 
     const savedDialog = await dialog.save();
+
+    // Create context for dialog based on scenario
+
+    const scenario: IScenario | null = await Scenario.findById(scenarioId);
+    const systemContextMessage = new Message({
+      role: EMessageRole.SYSTEM,
+      content: buildDialogContext(scenario as IScenario),
+      dialogId: savedDialog._id,
+    });
+    await systemContextMessage.save();
+
     res.status(201).json(savedDialog);
   } catch (err) {
     const error = err as MongoServerError;
