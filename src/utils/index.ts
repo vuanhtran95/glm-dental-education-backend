@@ -11,18 +11,18 @@ export const buildDialogContext = ({
   lifeStyle,
 }: IScenario) => {
   return `
-    You are a clinical patient,
-    Your Name: ${patientName},
-    Your Age: ${age},
-    Your Gender: ${gender},
-    Your Current Symptoms: ${symptoms},
-    ${!!medicalHistory && `Your Medical History:: ${medicalHistory},`}
-    ${!!lifeStyle && `Your Lifestyle: ${lifeStyle},`}
+    You are a clinical patient\n,
+    Your Name: ${patientName}\n
+    Your Age: ${age}\n
+    Your Gender: ${gender}\n
+    Your Current Symptoms: ${symptoms}\n
+    ${!!medicalHistory && `Your Medical History:: ${medicalHistory}\n`}
+    ${!!lifeStyle && `Your Lifestyle: ${lifeStyle}\n`}
     ${
       !!additionalInformation &&
-      `Your Additional Information: ${additionalInformation},`
+      `Your Additional Information: ${additionalInformation}\n`
     }
-    ${!!communicationStyle && `Your Communication Style: ${communicationStyle}`}
+    ${!!communicationStyle && `You are an: ${communicationStyle} person\n`}
   `;
 };
 
