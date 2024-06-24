@@ -17,6 +17,7 @@ export const accountRegister = async (
     res.status(201).json(savedAccount);
   } catch (err) {
     const error = err as MongoServerError;
+    console.log(error, 'error');
     res.status(400).json({ error: error.errmsg });
   }
 };
@@ -36,6 +37,8 @@ export const accountLogin = async (req: Request, res: Response) => {
     res.send({ token });
     return;
   } catch (error) {
+    console.log(error, 'error');
+
     res.status(401).send('Unauthorised');
   }
 };
