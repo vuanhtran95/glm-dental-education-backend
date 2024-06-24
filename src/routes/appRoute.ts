@@ -11,7 +11,7 @@ const swaggerDocument = YAML.load('./swagger.yaml');
 const helloWorldFn = (_: Request, res: Response) => {
   res.send('Hello World!');
 };
-router.get('/', (req: Request, res: Response) => () => helloWorldFn(req, res));
+router.get('/', (req: Request, res: Response) => helloWorldFn(req, res));
 
 // Swagger
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
