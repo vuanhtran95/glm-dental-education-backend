@@ -47,6 +47,7 @@ export const dialogGetList = async (
 
   try {
     const dialogs = await Dialog.find({ createdUserId: userId })
+      .sort({ updatedAt: 'desc' })
       .populate('scenarioId')
       .exec();
     res.status(200).json({ dialogs });
