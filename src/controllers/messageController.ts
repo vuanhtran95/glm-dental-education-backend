@@ -5,6 +5,8 @@ import { EMessageRole, IMessage, LlamaMessage } from '../types/message';
 import axios from 'axios';
 import env from '../config/env';
 import { removeTextInsideAsterisks } from '../utils';
+import { runPolly } from '../services/polly';
+import pollyClient from '../services/polly/polly-client';
 
 export const messageCreate = async (
   req: Request,
@@ -12,17 +14,27 @@ export const messageCreate = async (
 ): Promise<void> => {
   const { messages, dialogId } = req.body;
 
+  let uri = [];
+
+  uri[0] = await runPolly(messages[0].content);
+  uri[1] = await runPolly(messages[1].content);
+
+  const payload = await messages.map((message: LlamaMessage, key: number) => {
+    return {
+      role: message.role,
+      content: message.content,
+      dialogId,
+      uri: uri[key],
+    };
+  });
+
   try {
-    await Message.insertMany(
-      messages.map((message: LlamaMessage) => ({
-        role: message.role,
-        content: message.content,
-        dialogId,
-      }))
-    );
+    await Message.insertMany(payload);
 
     res.status(201).json({});
   } catch (err) {
+    console.log(err, 'err');
+
     res.status(400).json(ERROR_RESPONSE.SERVER_ERROR);
   }
 };

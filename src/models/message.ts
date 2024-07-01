@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import { EMessageRole, IMessage } from '../types/message';
+import { runPolly } from '../services/polly';
 
 const messageSchema: Schema = new Schema<IMessage>({
   role: {
@@ -18,6 +19,10 @@ const messageSchema: Schema = new Schema<IMessage>({
   dialogId: {
     type: Schema.Types.ObjectId,
     required: true,
+  },
+  uri: {
+    type: String,
+    required: false,
   },
 });
 

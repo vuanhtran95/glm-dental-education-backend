@@ -6,6 +6,7 @@
   "author": "Victor Tran",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-polly": "^3.606.0",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/ip": "^1.1.3",
