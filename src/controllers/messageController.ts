@@ -10,15 +10,16 @@ export const messageCreate = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { content, dialogId, role } = req.body;
+  const { messages, dialogId } = req.body;
 
   try {
-    const message = new Message({
-      content,
-      dialogId,
-      role,
-    });
-    await message.save();
+    await Message.insertMany(
+      messages.map((message: LlamaMessage) => ({
+        role: message.role,
+        content: message.content,
+        dialogId,
+      }))
+    );
 
     res.status(201).json({});
   } catch (err) {

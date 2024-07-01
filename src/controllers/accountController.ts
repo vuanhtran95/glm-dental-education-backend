@@ -4,17 +4,23 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import Account from '../models/account';
 import { MongoServerError } from 'mongodb';
+import { User } from '../models';
 
 export const accountRegister = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { username, password } = req.body;
+  const { username, password, role, fullName } = req.body;
 
   try {
+    // Add transaction
     const newAccount = new Account({ username, password });
-    const savedAccount = await newAccount.save();
-    res.status(201).json(savedAccount);
+    await newAccount.save();
+
+    const newUser = new User({ accountId: newAccount._id, role, fullName });
+    const savedUser = await newUser.save();
+
+    res.status(201).json(savedUser);
   } catch (err) {
     const error = err as MongoServerError;
     console.log(error, 'error');
