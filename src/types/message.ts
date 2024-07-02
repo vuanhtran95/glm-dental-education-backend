@@ -11,7 +11,7 @@ export interface IMessage {
   content: string;
   createdAt: Date;
   dialogId: Types.ObjectId;
-  uri: string;
+  uri?: string;
 }
 
-export type LlamaMessage = Pick<IMessage, 'role' | 'content'>;
+export type LlamaMessage = Pick<IMessage, 'role' | 'content' | 'uri'>;

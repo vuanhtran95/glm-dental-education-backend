@@ -1,12 +1,11 @@
 import { Request, Response } from 'express';
 import { Message } from '../models';
 import { ERROR_RESPONSE } from '../constants';
-import { EMessageRole, IMessage, LlamaMessage } from '../types/message';
+import { LlamaMessage } from '../types/message';
 import axios from 'axios';
 import env from '../config/env';
 import { removeTextInsideAsterisks } from '../utils';
 import { runPolly } from '../services/polly';
-import pollyClient from '../services/polly/polly-client';
 
 export const messageCreate = async (
   req: Request,
@@ -14,17 +13,14 @@ export const messageCreate = async (
 ): Promise<void> => {
   const { messages, dialogId } = req.body;
 
-  let uri = [];
-
-  uri[0] = await runPolly(messages[0].content);
-  uri[1] = await runPolly(messages[1].content);
+  const uri = await runPolly(messages[1].content);
 
   const payload = await messages.map((message: LlamaMessage, key: number) => {
     return {
       role: message.role,
       content: message.content,
       dialogId,
-      uri: uri[key],
+      uri: key === 0 ? message.uri : uri,
     };
   });
 
