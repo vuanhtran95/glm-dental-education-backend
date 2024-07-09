@@ -1,6 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
 import { EMessageRole, IMessage } from '../types/message';
-import { runPolly } from '../services/polly';
 
 const messageSchema: Schema = new Schema<IMessage>({
   role: {

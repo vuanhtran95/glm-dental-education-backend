@@ -3,6 +3,7 @@ import {
   StartSpeechSynthesisTaskCommandInput,
 } from '@aws-sdk/client-polly';
 import pollyClient from './polly-client';
+import env from '../../config/env';
 
 /**
  *
@@ -12,7 +13,7 @@ import pollyClient from './polly-client';
 export const runPolly = async (text: string): Promise<string> => {
   const params = {
     OutputFormat: 'mp3',
-    OutputS3BucketName: 'polly-bucket-dental-llm',
+    OutputS3BucketName: env.s3BucketName,
     Text: text,
     TextType: 'text',
     VoiceId: 'Joanna',

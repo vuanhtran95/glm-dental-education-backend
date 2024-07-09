@@ -5,7 +5,6 @@ import { LlamaMessage } from '../types/message';
 import axios from 'axios';
 import env from '../config/env';
 import { removeTextInsideAsterisks } from '../utils';
-import { runPolly } from '../services/polly';
 
 export const messageCreate = async (
   req: Request,
@@ -13,14 +12,12 @@ export const messageCreate = async (
 ): Promise<void> => {
   const { messages, dialogId } = req.body;
 
-  const uri = await runPolly(messages[1].content);
-
   const payload = await messages.map((message: LlamaMessage, key: number) => {
     return {
       role: message.role,
       content: message.content,
       dialogId,
-      uri: key === 0 ? message.uri : uri,
+      uri: key === 0 ? message.uri : '',
     };
   });
 
