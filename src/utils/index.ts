@@ -2,27 +2,20 @@ import { IScenario } from '../types/scenario';
 
 export const buildDialogContext = ({
   patientName,
-  age,
+  dateOfBirth,
   gender,
   medicalHistory,
   symptoms,
-  additionalInformation,
-  communicationStyle,
   lifeStyle,
 }: IScenario) => {
   return `
     You are a clinical patient\n,
     Your Name: ${patientName}\n
-    Your Age: ${age}\n
+    Your Data of Birth: ${dateOfBirth}\n
     Your Gender: ${gender}\n
     Your Current Symptoms: ${symptoms}\n
     ${!!medicalHistory && `Your Medical History:: ${medicalHistory}\n`}
     ${!!lifeStyle && `Your Lifestyle: ${lifeStyle}\n`}
-    ${
-      !!additionalInformation &&
-      `Your Additional Information: ${additionalInformation}\n`
-    }
-    Please, just answer concisely user question!!!
   `;
 };
 

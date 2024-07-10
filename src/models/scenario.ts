@@ -3,19 +3,11 @@ import { IScenario } from '../types/scenario';
 import { IGender } from '../types/user';
 
 const scenarioSchema: Schema = new Schema<IScenario>({
-  name: {
-    type: String,
-    required: true,
-  },
   patientName: {
     type: String,
     required: true,
   },
-  age: {
-    type: Number,
-    required: true,
-  },
-  communicationStyle: {
+  dateOfBirth: {
     type: String,
     required: true,
   },
@@ -34,12 +26,9 @@ const scenarioSchema: Schema = new Schema<IScenario>({
   },
   lifeStyle: {
     type: String,
-    required: true,
-  },
-  additionalInformation: {
-    type: String,
     required: false,
   },
+
   createdAt: {
     type: Date,
     default: Date.now,

@@ -7,8 +7,8 @@ export enum ERole {
 }
 
 export enum IGender {
-  MALE = 'male',
-  FEMALE = 'female',
+  MALE = 'Male',
+  FEMALE = 'Female',
 }
 
 export interface IUser extends Document {
