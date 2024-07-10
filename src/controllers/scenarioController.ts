@@ -72,7 +72,7 @@ export const scenarioGetDetail = async (
 };
 
 export const generateScenario = async (req: Request, res: Response) => {
-  const { createdUserId } = req.body;
+  const { createdUserId, patientName, gender } = req.body;
 
   if (!createdUserId) res.status(400).json({ error: 'Id not found' });
   try {
@@ -80,7 +80,7 @@ export const generateScenario = async (req: Request, res: Response) => {
       'https://sbyv3a06nk.execute-api.eu-west-2.amazonaws.com/default/callToLlama',
       {
         inputs:
-          "<|begin_of_text|><|start_header_id|>user<|end_header_id|>You are a robot that only outputs JSON. You reply in JSON format with the field 'patientName', 'dateOfBirth', 'gender', 'medicalHistory', 'symptoms', 'lifeStyle'. Example question: Generate dentist patient record with these fields? Example answer: {'patientName': 'Peter Pan', 'dateOfBirth': '14 Jul 2002', 'gender': 'Male', 'symptoms': 'Toothache, Sensitive Teeth', 'lifeStyle': ''} Now here is my question: Generate a relistic dentist patient record.<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
+          "<|begin_of_text|><|start_header_id|>user<|end_header_id|>You are a robot that only outputs JSON. You reply in JSON format with the field 'patientName', 'dateOfBirth', 'gender', 'medicalHistory', 'symptoms', 'lifeStyle'. Example question: Generate dentist patient record with these fields? Example answer: {'patientName': 'Peter Pan', 'dateOfBirth': '14 Jul 2002', 'gender': 'Male', 'lifeStyle': ''} Now here is my question: Generate a relistic dentist patient record.<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
         parameters: {
           max_new_tokens: 96,
           top_p: 0.9,
@@ -103,6 +103,8 @@ export const generateScenario = async (req: Request, res: Response) => {
     const params = {
       ...JSON.parse(raw2),
       createdUserId,
+      patientName,
+      gender,
     };
 
     const scenario = new Scenario(params);

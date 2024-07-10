@@ -23,18 +23,16 @@ export const messageCreate = async (
     },
     {
       role: EMessageRole.ASSISTANT,
-      content: assistantMessage,
+      content: removeIncompleteSentences(assistantMessage),
       dialogId,
     },
   ];
 
   try {
-    await Message.insertMany(payload);
+    const message = await Message.insertMany(payload);
 
-    res.status(201).json({});
+    res.status(201).json({ message });
   } catch (err) {
-    // console.log(err, 'err');
-
     res.status(400).json(ERROR_RESPONSE.SERVER_ERROR);
   }
 };
@@ -49,7 +47,7 @@ export const callToLlama2 = async (
       {
         inputs: buildMessage(question, history).replace(/\n/g, ''),
         parameters: {
-          max_new_tokens: 24,
+          max_new_tokens: 36,
           top_p: 0.9,
           temperature: 0.6,
         },
@@ -82,4 +80,35 @@ export const buildMessage = (question: string, history: LlamaMessage[]) => {
         ? `<|eot_id|><|start_header_id|>user<|end_header_id|>${message.content}`
         : `<|eot_id|><|start_header_id|>assistant<|end_header_id|>${message.content}`
     )}<|eot_id|><|start_header_id|>user<|end_header_id|>${question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>`;
+};
+
+const removeIncompleteSentences = (text: string) => {
+  // Split the text into paragraphs
+  let paragraphs = text.split('\n');
+
+  // Process each paragraph
+  paragraphs = paragraphs.map((paragraph) => {
+    // Trim any extra whitespace
+    paragraph = paragraph.trim();
+
+    // Find the last sentence
+    let lastSentenceIndex = paragraph.lastIndexOf('.');
+
+    // If the last sentence doesn't end with a dot, remove it
+    if (
+      lastSentenceIndex === -1 ||
+      lastSentenceIndex !== paragraph.length - 1
+    ) {
+      let sentences = paragraph.split('.');
+      // Remove the last sentence
+      sentences.pop();
+      // Join the remaining sentences back together
+      paragraph = sentences.join('.') + '.';
+    }
+
+    return paragraph;
+  });
+
+  // Join the paragraphs back together
+  return paragraphs.join('\n');
 };
