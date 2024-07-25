@@ -21,8 +21,6 @@ export const userCreate = async (
     return;
   }
 
-  // TODO: Check if account is associated to another user?
-
   // Create user link to account
   try {
     const newUser = new User({ accountId, role, fullName });

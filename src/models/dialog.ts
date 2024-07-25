@@ -2,10 +2,6 @@ import mongoose, { Schema } from 'mongoose';
 import { IDialog } from '../types/dialog';
 
 const dialogSchema: Schema = new Schema<IDialog>({
-  name: {
-    type: String,
-    required: true,
-  },
   createdUserId: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -22,7 +18,7 @@ const dialogSchema: Schema = new Schema<IDialog>({
     type: Date,
     default: Date.now,
   },
-  isDeleted: {
+  isEnded: {
     type: Boolean,
     default: false,
   },

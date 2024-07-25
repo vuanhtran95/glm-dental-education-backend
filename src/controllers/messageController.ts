@@ -12,7 +12,9 @@ export const messageCreate = async (
 
   const messages = await Message.find({ dialogId });
 
-  const assistantMessage = await callToLlama2(message.content, messages);
+  const assistantMessage = 'Mock Message.';
+
+  // const assistantMessage = await callToLlama2(message.content, messages);
 
   const payload = [
     {
@@ -47,7 +49,7 @@ export const callToLlama2 = async (
       {
         inputs: buildMessage(question, history).replace(/\n/g, ''),
         parameters: {
-          max_new_tokens: 36,
+          max_new_tokens: 48,
           top_p: 0.9,
           temperature: 0.6,
         },

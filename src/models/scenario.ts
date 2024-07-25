@@ -28,7 +28,6 @@ const scenarioSchema: Schema = new Schema<IScenario>({
     type: String,
     required: false,
   },
-
   createdAt: {
     type: Date,
     default: Date.now,
@@ -36,14 +35,6 @@ const scenarioSchema: Schema = new Schema<IScenario>({
   updatedAt: {
     type: Date,
     default: Date.now,
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-  createdUserId: {
-    type: Schema.Types.ObjectId,
-    required: true,
   },
 });
 

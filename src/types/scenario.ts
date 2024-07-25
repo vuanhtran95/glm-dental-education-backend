@@ -1,4 +1,3 @@
-import { Types } from 'mongoose';
 import { IGender } from './user';
 
 export interface IScenario extends Document {
@@ -11,5 +10,4 @@ export interface IScenario extends Document {
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
-  createdUserId: Types.ObjectId;
 }

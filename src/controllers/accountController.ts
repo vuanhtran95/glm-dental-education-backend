@@ -6,6 +6,11 @@ import Account from '../models/account';
 import { MongoServerError } from 'mongodb';
 import { User } from '../models';
 
+/**
+ * Register account: create account and user link to account
+ * @param req
+ * @param res
+ */
 export const accountRegister = async (
   req: Request,
   res: Response
@@ -13,7 +18,6 @@ export const accountRegister = async (
   const { username, password, role, fullName } = req.body;
 
   try {
-    // Add transaction
     const newAccount = new Account({ username, password });
     await newAccount.save();
 
