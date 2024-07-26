@@ -12,6 +12,7 @@ export interface IMessage {
   createdAt: Date;
   dialogId: Types.ObjectId;
   uri?: string;
+  feedback: string;
 }
 
 export type LlamaMessage = Pick<IMessage, 'role' | 'content' | 'uri'>;

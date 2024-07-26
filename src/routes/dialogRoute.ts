@@ -5,6 +5,7 @@ import {
   dialogGetList,
   dialogEnd,
   dialogSubmit,
+  dialogFeedback,
 } from '../controllers/dialogController';
 import { Request, Response } from 'express';
 import { authenticationMiddleware } from '../middleware/authentication';
@@ -28,6 +29,10 @@ router.post('/:id/end', (req: Request, res: Response) =>
 
 router.post('/:id/submit', (req: Request, res: Response) =>
   authenticationMiddleware(req, res, () => dialogSubmit(req, res))
+);
+
+router.post('/:id/feedback', (req: Request, res: Response) =>
+  authenticationMiddleware(req, res, () => dialogFeedback(req, res))
 );
 
 export default router;

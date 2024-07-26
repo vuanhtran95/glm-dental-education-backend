@@ -7,4 +7,5 @@ export interface IDialog {
   updatedAt: Date;
   isEnded: boolean;
   isSubmitted: boolean;
+  feedback: String;
 }

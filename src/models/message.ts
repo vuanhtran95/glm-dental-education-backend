@@ -23,6 +23,10 @@ const messageSchema: Schema = new Schema<IMessage>({
     type: String,
     required: false,
   },
+  feedback: {
+    type: String,
+    required: false,
+  },
 });
 
 messageSchema.pre<IMessage>('save', async function (next) {

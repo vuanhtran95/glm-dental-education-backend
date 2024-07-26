@@ -26,6 +26,10 @@ const dialogSchema: Schema = new Schema<IDialog>({
     type: Boolean,
     default: false,
   },
+  feedback: {
+    type: String,
+    default: false,
+  },
 });
 
 dialogSchema.pre<IDialog>('save', async function (next) {

@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
-import { MongoServerError } from 'mongodb';
+import { MongoServerError, ObjectId } from 'mongodb';
 import Dialog from '../models/dialog';
 import { Message, Scenario } from '../models';
 import { EMessageRole } from '../types/message';
 import { buildDialogContext } from '../utils';
 import { IScenario } from '../types/scenario';
+import mongoose, { Schema } from 'mongoose';
 
 export const dialogCreate = async (
   req: Request,
@@ -41,11 +42,15 @@ export const dialogGetList = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { user_id: userId } = req.query;
-  if (!userId) res.status(400).json({ error: 'Id not found' });
+  const { userId } = req.query;
+
+  const id = userId as string;
 
   try {
     const dialogs = await Dialog.aggregate([
+      {
+        $match: userId ? { createdUserId: userId ? new ObjectId(id) : '' } : {},
+      },
       {
         $lookup: {
           from: 'scenarios',
@@ -95,8 +100,6 @@ export const dialogEnd = async (req: Request, res: Response): Promise<void> => {
       { isEnded: true }
     );
 
-    console.log(dialog, 'dialog');
-
     if (!dialog) {
       res.status(404).send('Dialog not found');
       return;
@@ -121,6 +124,30 @@ export const dialogSubmit = async (
       { _id: id },
       { isSubmitted: true }
     );
+
+    if (!dialog) {
+      res.status(404).send('Dialog not found');
+      return;
+    }
+
+    res.status(201).json({});
+  } catch (err) {
+    const error = err as MongoServerError;
+    res.status(400).json({ error: error.errmsg });
+  }
+};
+
+export const dialogFeedback = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id } = req.params;
+  if (!id) res.status(400).json({ error: 'Id not found' });
+
+  const { feedback } = req.body;
+
+  try {
+    const dialog = await Dialog.findOneAndUpdate({ _id: id }, { feedback });
 
     if (!dialog) {
       res.status(404).send('Dialog not found');

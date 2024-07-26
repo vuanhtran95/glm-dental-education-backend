@@ -39,6 +39,29 @@ export const messageCreate = async (
   }
 };
 
+export const messageFeedback = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id } = req.params;
+  if (!id) res.status(400).json({ error: 'Id not found' });
+
+  const { feedback } = req.body;
+
+  try {
+    const message = await Message.findOneAndUpdate({ _id: id }, { feedback });
+
+    if (!message) {
+      res.status(404).send('Message not found');
+      return;
+    }
+
+    res.status(201).json({ message });
+  } catch (err) {
+    res.status(400).json(ERROR_RESPONSE.SERVER_ERROR);
+  }
+};
+
 export const callToLlama2 = async (
   question: string,
   history: LlamaMessage[]
