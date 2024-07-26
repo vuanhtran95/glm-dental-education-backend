@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { MongoServerError, ObjectId } from 'mongodb';
 import Dialog from '../models/dialog';
-import { Message, Scenario } from '../models';
+import { Message, Scenario, User } from '../models';
 import { EMessageRole } from '../types/message';
 import { buildDialogContext } from '../utils';
 import { IScenario } from '../types/scenario';
@@ -49,7 +49,9 @@ export const dialogGetList = async (
   try {
     const dialogs = await Dialog.aggregate([
       {
-        $match: userId ? { createdUserId: userId ? new ObjectId(id) : '' } : {},
+        $match: userId
+          ? { createdUserId: userId ? new ObjectId(id) : '' }
+          : { isSubmitted: true },
       },
       {
         $lookup: {
@@ -61,6 +63,17 @@ export const dialogGetList = async (
       },
       {
         $unwind: '$scenario',
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'createdUserId',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      {
+        $unwind: '$user',
       },
     ]);
     res.status(200).json({ dialogs });
@@ -81,7 +94,8 @@ export const dialogGetDetail = async (
     const dialog = await Dialog.findById(id);
     const scenario = await Scenario.findById(dialog?.scenarioId);
     const messages = await Message.find({ dialogId: id });
-    res.status(200).json({ detail: { dialog, messages, scenario } });
+    const user = await User.findById(dialog?.createdUserId);
+    res.status(200).json({ detail: { dialog, messages, scenario, user } });
   } catch (err) {
     const error = err as MongoServerError;
     res.status(400).json({ error: error.errmsg });
