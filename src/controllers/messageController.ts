@@ -12,9 +12,7 @@ export const messageCreate = async (
 
   const messages = await Message.find({ dialogId });
 
-  const assistantMessage = 'Mock Message.';
-
-  // const assistantMessage = await callToLlama2(message.content, messages);
+  const assistantMessage = await callToLlama2(message.content, messages);
 
   const payload = [
     {
