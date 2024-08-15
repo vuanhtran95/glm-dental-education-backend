@@ -3,6 +3,7 @@ import { Message } from '../models';
 import { ERROR_RESPONSE } from '../constants';
 import { EMessageRole, LlamaMessage } from '../types/message';
 import axios from 'axios';
+import env from '../config/env';
 
 export const messageCreate = async (
   req: Request,
@@ -23,7 +24,7 @@ export const messageCreate = async (
     },
     {
       role: EMessageRole.ASSISTANT,
-      content: removeIncompleteSentences(assistantMessage),
+      content: assistantMessage,
       dialogId,
     },
   ];
@@ -66,7 +67,7 @@ export const callToLlama2 = async (
 ) => {
   try {
     const response = await axios.post(
-      'https://6gp68ltt10.execute-api.eu-west-2.amazonaws.com/default/callToLlama',
+      env.llamaApi,
       {
         inputs: buildMessage(question, history).replace(/\n/g, ''),
         parameters: {
@@ -84,11 +85,10 @@ export const callToLlama2 = async (
       }
     );
 
-    const raw1 = response.data.split('<|end_header_id|>');
-    const raw2 = raw1[raw1.length - 1].replace(/\n/g, '');
-    return raw2;
+    const rawResponse = response.data.split('<|end_header_id|>');
+    return rawResponse[rawResponse.length - 1].replace(/\n/g, '');
   } catch (err) {
-    console.log(err, 'errrrrrrr');
+    console.log(err, 'error');
   }
 };
 
@@ -103,35 +103,4 @@ export const buildMessage = (question: string, history: LlamaMessage[]) => {
         ? `<|eot_id|><|start_header_id|>user<|end_header_id|>${message.content}`
         : `<|eot_id|><|start_header_id|>assistant<|end_header_id|>${message.content}`
     )}<|eot_id|><|start_header_id|>user<|end_header_id|>${question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>`;
-};
-
-const removeIncompleteSentences = (text: string) => {
-  // Split the text into paragraphs
-  let paragraphs = text.split('\n');
-
-  // Process each paragraph
-  paragraphs = paragraphs.map((paragraph) => {
-    // Trim any extra whitespace
-    paragraph = paragraph.trim();
-
-    // Find the last sentence
-    let lastSentenceIndex = paragraph.lastIndexOf('.');
-
-    // If the last sentence doesn't end with a dot, remove it
-    if (
-      lastSentenceIndex === -1 ||
-      lastSentenceIndex !== paragraph.length - 1
-    ) {
-      let sentences = paragraph.split('.');
-      // Remove the last sentence
-      sentences.pop();
-      // Join the remaining sentences back together
-      paragraph = sentences.join('.') + '.';
-    }
-
-    return paragraph;
-  });
-
-  // Join the paragraphs back together
-  return paragraphs.join('\n');
 };

@@ -75,6 +75,7 @@ export const dialogGetList = async (
       {
         $unwind: '$user',
       },
+      { $sort: { createdAt: -1 } },
     ]);
     res.status(200).json({ dialogs });
   } catch (err) {
@@ -104,7 +105,6 @@ export const dialogGetDetail = async (
 
 export const dialogEnd = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
-  console.log(id, 'id');
 
   if (!id) res.status(400).json({ error: 'Id not found' });
 
