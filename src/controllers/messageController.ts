@@ -11,9 +11,11 @@ export const messageCreate = async (
 ): Promise<void> => {
   const { message, dialogId } = req.body;
 
-  const messages = await Message.find({ dialogId });
+  // const messages = await Message.find({ dialogId });
 
-  const assistantMessage = await callToLlama2(message.content, messages);
+  // const assistantMessage = await callToLlama2(message.content, messages);
+
+  const assistantMessage = 'Good'
 
   const payload = [
     {
