@@ -25,7 +25,6 @@ const options = {
   cert: fs.readFileSync(path.join(__dirname, "..", "localhost.pem")),
 };
 
-const server = https.createServer(options, app);
 
 
 const ipAddress = ip.address();
@@ -44,9 +43,7 @@ app.use(morgan("dev"));
 
 connectMongoDb();
 
-app.listen(env.port, () => {
-  console.log(`Example app listening on IP: ${ipAddress} Port:${env.port}`);
-});
+
 
 // User
 app.use('/api/accounts', accountRoute);
@@ -55,5 +52,11 @@ app.use('/api/scenarios', scenarioRoute);
 app.use('/api/dialogs', dialogRoute);
 app.use('/api/messages', messageRoute);
 app.use('/', appRoute);
+
+const server = https.createServer(options, app);
+
+server.listen(env.port, () => {
+  console.log(`Example app listening on IP: ${ipAddress} Port:${env.port}`);
+});
 
 
