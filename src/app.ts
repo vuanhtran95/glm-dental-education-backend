@@ -1,5 +1,9 @@
 import express, { Express } from 'express';
 import ip from 'ip';
+import https from 'https'
+import path from "path";
+import fs from "fs";
+import morgan from "morgan";
 
 import cors from 'cors';
 import connectMongoDb from './config/database';
@@ -15,6 +19,15 @@ import {
 
 const app: Express = express();
 
+// Read SSL certificate and key files
+const options = {
+  key: fs.readFileSync(path.join(__dirname, "..", "localhost-key.pem")),
+  cert: fs.readFileSync(path.join(__dirname, "..", "localhost.pem")),
+};
+
+const server = https.createServer(options, app);
+
+
 const ipAddress = ip.address();
 
 // CORS config
@@ -25,6 +38,9 @@ app.use(express.json());
 
 // Parses incoming requests with URL-encoded payloads
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware
+app.use(morgan("dev"));
 
 connectMongoDb();
 
@@ -39,3 +55,5 @@ app.use('/api/scenarios', scenarioRoute);
 app.use('/api/dialogs', dialogRoute);
 app.use('/api/messages', messageRoute);
 app.use('/', appRoute);
+
+
