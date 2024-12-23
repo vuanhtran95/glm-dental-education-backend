@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const dialogController_1 = require("../controllers/dialogController");
+const authentication_1 = require("../middleware/authentication");
+const router = (0, express_1.Router)();
+router.post('/', (req, res) => (0, authentication_1.authenticationMiddleware)(req, res, () => (0, dialogController_1.dialogCreate)(req, res)));
+router.get('/', (req, res) => (0, authentication_1.authenticationMiddleware)(req, res, () => (0, dialogController_1.dialogGetList)(req, res)));
+router.get('/:id', (req, res) => (0, authentication_1.authenticationMiddleware)(req, res, () => (0, dialogController_1.dialogGetDetail)(req, res)));
+router.post('/:id/end', (req, res) => (0, authentication_1.authenticationMiddleware)(req, res, () => (0, dialogController_1.dialogEnd)(req, res)));
+router.post('/:id/submit', (req, res) => (0, authentication_1.authenticationMiddleware)(req, res, () => (0, dialogController_1.dialogSubmit)(req, res)));
+router.post('/:id/feedback', (req, res) => (0, authentication_1.authenticationMiddleware)(req, res, () => (0, dialogController_1.dialogFeedback)(req, res)));
+exports.default = router;
