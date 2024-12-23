@@ -23,7 +23,7 @@ app.use('/api/dialogs', routes_1.dialogRoute);
 app.use('/api/messages', routes_1.messageRoute);
 app.use('/', routes_1.appRoute);
 // Start Server
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
