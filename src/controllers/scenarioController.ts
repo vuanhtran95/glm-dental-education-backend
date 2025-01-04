@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import Scenario from '../models/scenario';
-import axios from 'axios';
-import env from '../config/env';
-import { IGender } from '../types/user';
+import { Request, Response } from "express";
+import Scenario from "../models/scenario";
+import axios from "axios";
+import env from "../config/env";
+import { IGender } from "../types/user";
 
 export const generateScenario = async (req: Request, res: Response) => {
   const { patientName, gender } = req.body;
@@ -41,11 +41,11 @@ export const generateScenario = async (req: Request, res: Response) => {
     const mockParams = {
       patientName,
       dateOfBirth: "16/9/2005",
-      gender: IGender.FEMALE,
-      medicalHistory: 'None',
-      symptoms: 'Nib',
-      lifeStyle: '',
-    }
+      gender,
+      medicalHistory: "None",
+      symptoms: "Nib",
+      lifeStyle: "Testing lifeStyle",
+    };
 
     const scenario = new Scenario(mockParams);
     const saved = await scenario.save();
@@ -53,6 +53,6 @@ export const generateScenario = async (req: Request, res: Response) => {
       res.status(201).json(saved);
     }, 1000);
   } catch (err) {
-    console.log(err, 'error');
+    console.log(err, "error");
   }
 };
