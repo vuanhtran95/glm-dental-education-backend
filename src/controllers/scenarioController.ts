@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import Scenario from "../models/scenario";
-import axios from "axios";
-import env from "../config/env";
-import { IGender } from "../types/user";
+import { IScenario } from "../types/scenario";
 
 export const generateScenario = async (req: Request, res: Response) => {
   const { patientName, gender } = req.body;
@@ -38,7 +36,7 @@ export const generateScenario = async (req: Request, res: Response) => {
     //   gender,
     // };
 
-    const mockParams = {
+    const mockParams: IScenario = {
       patientName,
       dateOfBirth: "16/9/2005",
       gender,

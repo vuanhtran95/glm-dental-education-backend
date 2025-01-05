@@ -1,13 +1,13 @@
-import { IGender } from './user';
+import { IGender } from "./user";
 
-export interface IScenario extends Document {
+export interface IScenario {
   patientName: string;
   dateOfBirth: string;
   gender: IGender;
   medicalHistory: string;
   symptoms: string;
   lifeStyle: string;
-  createdAt: Date;
-  updatedAt: Date;
-  isDeleted: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+  isDeleted?: boolean;
 }
