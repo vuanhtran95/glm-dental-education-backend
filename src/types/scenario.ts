@@ -5,6 +5,8 @@ export interface IScenario {
   dateOfBirth: string;
   gender: IGender;
   medicalHistory: string;
+  clinicalContext: string;
+  mentalState: string;
   symptoms: string;
   lifeStyle: string;
   createdAt?: Date;

@@ -1,6 +1,6 @@
-import mongoose, { Schema, Types } from 'mongoose';
-import { IScenario } from '../types/scenario';
-import { IGender } from '../types/user';
+import mongoose, { Schema, Types } from "mongoose";
+import { IScenario } from "../types/scenario";
+import { IGender } from "../types/user";
 
 const scenarioSchema: Schema = new Schema<IScenario>({
   patientName: {
@@ -17,6 +17,14 @@ const scenarioSchema: Schema = new Schema<IScenario>({
     enum: IGender,
   },
   medicalHistory: {
+    type: String,
+    required: true,
+  },
+  clinicalContext: {
+    type: String,
+    required: true,
+  },
+  mentalState: {
     type: String,
     required: true,
   },
@@ -38,10 +46,10 @@ const scenarioSchema: Schema = new Schema<IScenario>({
   },
 });
 
-scenarioSchema.pre<IScenario>('save', async function (next) {
+scenarioSchema.pre<IScenario>("save", async function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-const Scenario = mongoose.model<IScenario>('Scenario', scenarioSchema);
+const Scenario = mongoose.model<IScenario>("Scenario", scenarioSchema);
 export default Scenario;

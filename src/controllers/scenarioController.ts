@@ -3,7 +3,8 @@ import Scenario from "../models/scenario";
 import { IScenario } from "../types/scenario";
 
 export const generateScenario = async (req: Request, res: Response) => {
-  const { patientName, gender } = req.body;
+  const { patientName, gender, clinicalContext, medicalHistory, mentalState } =
+    req.body;
 
   try {
     // const response = await axios.post(
@@ -40,9 +41,11 @@ export const generateScenario = async (req: Request, res: Response) => {
       patientName,
       dateOfBirth: "16/9/2005",
       gender,
-      medicalHistory: "None",
+      medicalHistory: medicalHistory || "mock medicalHistory",
       symptoms: "Nib",
       lifeStyle: "Testing lifeStyle",
+      clinicalContext: clinicalContext || "mock clinicalContext",
+      mentalState: mentalState || "Mock mentalState",
     };
 
     const scenario = new Scenario(mockParams);
