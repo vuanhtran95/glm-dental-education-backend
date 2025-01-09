@@ -3,6 +3,7 @@ import { IScenario } from "../types/scenario";
 import { IGender } from "../types/user";
 
 const scenarioSchema: Schema = new Schema<IScenario>({
+  // General
   patientName: {
     type: String,
     required: true,
@@ -16,26 +17,50 @@ const scenarioSchema: Schema = new Schema<IScenario>({
     required: true,
     enum: IGender,
   },
+  occupation: {
+    type: String,
+    required: true,
+  },
+
+  // Clinical context
   medicalHistory: {
     type: String,
     required: true,
   },
-  clinicalContext: {
-    type: String,
-    required: true,
-  },
-  mentalState: {
-    type: String,
-    required: true,
-  },
-  symptoms: {
+  presentingComplaint: {
     type: String,
     required: true,
   },
   lifeStyle: {
     type: String,
-    required: false,
+    required: true,
   },
+
+  // Personal
+  emotionalState: {
+    type: String,
+    required: true,
+  },
+  personalTraits: {
+    type: String,
+    required: true,
+  },
+  communicationStyle: {
+    type: String,
+    required: true,
+  },
+
+  // Additional
+  clinicalContext: {
+    type: String,
+    required: true,
+  },
+  objectiveForStudent: {
+    type: String,
+    required: true,
+  },
+
+  // Mongo
   createdAt: {
     type: Date,
     default: Date.now,
