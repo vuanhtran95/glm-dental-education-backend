@@ -4,7 +4,19 @@ import { IScenario } from "../types/scenario";
 import { IGender } from "../types/user";
 
 export const generateScenario = async (req: Request, res: Response) => {
-  const { patientName, gender, clinicalContext, medicalHistory } = req.body;
+  const {
+    patientName,
+    gender,
+    presentingComplaint,
+    clinicalContext,
+    medicalHistory,
+    occupation,
+    lifeStyle,
+    emotionalState,
+    personalTraits,
+    communicationStyle,
+    objectiveForStudent,
+  } = req.body;
 
   try {
     // const response = await axios.post(
@@ -46,10 +58,13 @@ export const generateScenario = async (req: Request, res: Response) => {
       patientName,
       dateOfBirth: "16/9/2005",
       gender,
-      occupation: getRandomElement(["Teacher", "Software Engineer", "Retired"]),
+      occupation:
+        occupation ||
+        getRandomElement(["Teacher", "Software Engineer", "Retired"]),
 
       // Context
-      presentingComplaint: "Toothache in the lower left molar region.",
+      presentingComplaint:
+        presentingComplaint || "Toothache in the lower left molar region.",
       medicalHistory:
         medicalHistory ||
         getRandomElement([
@@ -57,25 +72,29 @@ export const generateScenario = async (req: Request, res: Response) => {
           "Hypertension",
           "No significant history",
         ]),
-      lifeStyle: getRandomElement([
-        "Healthy lifestyle with occasional exercise",
-        "Consumes fast food regularly, irregular oral hygiene",
-      ]),
+      lifeStyle:
+        lifeStyle ||
+        getRandomElement([
+          "Healthy lifestyle with occasional exercise",
+          "Consumes fast food regularly, irregular oral hygiene",
+        ]),
 
       // Additional
       clinicalContext: clinicalContext || "Patient is experiencing oral pain.",
 
       // Personality and communication:
-      emotionalState: getRandomElement(["Nervous", "Calm", "Irritated"]),
-      personalTraits: getRandomElement(["Talkative", "Reserved", "Skeptical"]),
-      communicationStyle: getRandomElement([
-        "Direct",
-        "Hesitant",
-        "Inquisitive",
-      ]),
+      emotionalState:
+        emotionalState || getRandomElement(["Nervous", "Calm", "Irritated"]),
+      personalTraits:
+        personalTraits ||
+        getRandomElement(["Talkative", "Reserved", "Skeptical"]),
+      communicationStyle:
+        communicationStyle ||
+        getRandomElement(["Direct", "Hesitant", "Inquisitive"]),
 
       // Objective
       objectiveForStudent:
+        objectiveForStudent ||
         "Build rapport and provide appropriate treatment recommendations.",
     };
 
