@@ -19,45 +19,45 @@ const scenarioSchema: Schema = new Schema<IScenario>({
   },
   occupation: {
     type: String,
-    required: true,
+    required: false,
   },
 
   // Clinical context
-  medicalHistory: {
-    type: String,
-    required: true,
-  },
   presentingComplaint: {
     type: String,
     required: true,
   },
+  medicalHistory: {
+    type: String,
+    required: false,
+  },
   lifeStyle: {
     type: String,
-    required: true,
+    required: false,
   },
 
   // Personal
   emotionalState: {
     type: String,
-    required: true,
+    required: false, // Neutral
   },
   personalTraits: {
     type: String,
-    required: true,
+    required: false,
   },
   communicationStyle: {
     type: String,
-    required: true,
+    required: false,
   },
 
   // Additional
   clinicalContext: {
     type: String,
-    required: true,
+    required: false,
   },
   objectiveForStudent: {
     type: String,
-    required: true,
+    required: false,
   },
 
   // Mongo
