@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
-import { MongoServerError, ObjectId } from 'mongodb';
-import Dialog from '../models/dialog';
-import { Message, Scenario, User } from '../models';
-import { EMessageRole } from '../types/message';
-import { buildDialogContext } from '../utils';
-import { IScenario } from '../types/scenario';
-import mongoose, { Schema } from 'mongoose';
+import { Request, Response } from "express";
+import { MongoServerError, ObjectId } from "mongodb";
+import Dialog from "../models/dialog";
+import { Message, Scenario, User } from "../models";
+import { EMessageRole } from "../types/message";
+import { buildDialogContext } from "../utils";
+import { IScenario } from "../types/scenario";
+import mongoose, { Schema } from "mongoose";
 
 export const dialogCreate = async (
   req: Request,
@@ -22,11 +22,15 @@ export const dialogCreate = async (
     const savedDialog = await dialog.save();
 
     // Create context for dialog based on scenario
-
     const scenario: IScenario | null = await Scenario.findById(scenarioId);
+    if (!scenario) {
+      res.status(404);
+      return;
+    }
+
     const systemContextMessage = new Message({
       role: EMessageRole.SYSTEM,
-      content: buildDialogContext(scenario as IScenario),
+      content: buildDialogContext(scenario),
       dialogId: savedDialog._id,
     });
     await systemContextMessage.save();
@@ -50,30 +54,30 @@ export const dialogGetList = async (
     const dialogs = await Dialog.aggregate([
       {
         $match: userId
-          ? { createdUserId: userId ? new ObjectId(id) : '' }
+          ? { createdUserId: userId ? new ObjectId(id) : "" }
           : { isSubmitted: true },
       },
       {
         $lookup: {
-          from: 'scenarios',
-          localField: 'scenarioId',
-          foreignField: '_id',
-          as: 'scenario',
+          from: "scenarios",
+          localField: "scenarioId",
+          foreignField: "_id",
+          as: "scenario",
         },
       },
       {
-        $unwind: '$scenario',
+        $unwind: "$scenario",
       },
       {
         $lookup: {
-          from: 'users',
-          localField: 'createdUserId',
-          foreignField: '_id',
-          as: 'user',
+          from: "users",
+          localField: "createdUserId",
+          foreignField: "_id",
+          as: "user",
         },
       },
       {
-        $unwind: '$user',
+        $unwind: "$user",
       },
       { $sort: { createdAt: -1 } },
     ]);
@@ -89,7 +93,7 @@ export const dialogGetDetail = async (
   res: Response
 ): Promise<void> => {
   const { id } = req.params;
-  if (!id) res.status(400).json({ error: 'Id not found' });
+  if (!id) res.status(400).json({ error: "Id not found" });
 
   try {
     const dialog = await Dialog.findById(id);
@@ -106,7 +110,7 @@ export const dialogGetDetail = async (
 export const dialogEnd = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
 
-  if (!id) res.status(400).json({ error: 'Id not found' });
+  if (!id) res.status(400).json({ error: "Id not found" });
 
   try {
     const dialog = await Dialog.findOneAndUpdate(
@@ -115,7 +119,7 @@ export const dialogEnd = async (req: Request, res: Response): Promise<void> => {
     );
 
     if (!dialog) {
-      res.status(404).send('Dialog not found');
+      res.status(404).send("Dialog not found");
       return;
     }
 
@@ -131,7 +135,7 @@ export const dialogSubmit = async (
   res: Response
 ): Promise<void> => {
   const { id } = req.params;
-  if (!id) res.status(400).json({ error: 'Id not found' });
+  if (!id) res.status(400).json({ error: "Id not found" });
 
   try {
     const dialog = await Dialog.findOneAndUpdate(
@@ -140,7 +144,7 @@ export const dialogSubmit = async (
     );
 
     if (!dialog) {
-      res.status(404).send('Dialog not found');
+      res.status(404).send("Dialog not found");
       return;
     }
 
@@ -156,7 +160,7 @@ export const dialogFeedback = async (
   res: Response
 ): Promise<void> => {
   const { id } = req.params;
-  if (!id) res.status(400).json({ error: 'Id not found' });
+  if (!id) res.status(400).json({ error: "Id not found" });
 
   const { feedback } = req.body;
 
@@ -164,7 +168,7 @@ export const dialogFeedback = async (
     const dialog = await Dialog.findOneAndUpdate({ _id: id }, { feedback });
 
     if (!dialog) {
-      res.status(404).send('Dialog not found');
+      res.status(404).send("Dialog not found");
       return;
     }
 
