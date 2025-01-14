@@ -45,6 +45,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const user_1 = require("../types/user");
 const scenarioSchema = new mongoose_1.Schema({
+    // General
     patientName: {
         type: String,
         required: true,
@@ -58,18 +59,46 @@ const scenarioSchema = new mongoose_1.Schema({
         required: true,
         enum: user_1.IGender,
     },
-    medicalHistory: {
+    occupation: {
+        type: String,
+        required: false,
+    },
+    // Clinical context
+    presentingComplaint: {
         type: String,
         required: true,
     },
-    symptoms: {
+    medicalHistory: {
         type: String,
-        required: true,
+        required: false,
     },
     lifeStyle: {
         type: String,
         required: false,
     },
+    // Personal
+    emotionalState: {
+        type: String,
+        required: false, // Neutral
+    },
+    personalTraits: {
+        type: String,
+        required: false,
+    },
+    communicationStyle: {
+        type: String,
+        required: false,
+    },
+    // Additional
+    clinicalContext: {
+        type: String,
+        required: false,
+    },
+    objectiveForStudent: {
+        type: String,
+        required: false,
+    },
+    // Mongo
     createdAt: {
         type: Date,
         default: Date.now,
@@ -79,11 +108,11 @@ const scenarioSchema = new mongoose_1.Schema({
         default: Date.now,
     },
 });
-scenarioSchema.pre('save', function (next) {
+scenarioSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         this.updatedAt = new Date();
         next();
     });
 });
-const Scenario = mongoose_1.default.model('Scenario', scenarioSchema);
+const Scenario = mongoose_1.default.model("Scenario", scenarioSchema);
 exports.default = Scenario;

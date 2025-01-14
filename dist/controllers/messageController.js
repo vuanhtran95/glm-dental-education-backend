@@ -8,21 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildMessage = exports.callToLlama2 = exports.messageFeedback = exports.messageCreate = void 0;
+exports.callToLlama = exports.messageFeedback = exports.messageCreate = void 0;
 const models_1 = require("../models");
 const constants_1 = require("../constants");
 const message_1 = require("../types/message");
-const axios_1 = __importDefault(require("axios"));
-const env_1 = __importDefault(require("../config/env"));
+const huggingFace_1 = require("../utils/huggingFace");
+const utils_1 = require("../utils");
 const messageCreate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { message, dialogId } = req.body;
-    // const messages = await Message.find({ dialogId });
-    // const assistantMessage = await callToLlama2(message.content, messages);
-    const assistantMessage = Math.random();
+    const messages = yield models_1.Message.find({ dialogId });
+    const assistantMessage = yield (0, exports.callToLlama)(message.content, messages);
     const payload = [
         {
             role: message_1.EMessageRole.USER,
@@ -48,12 +44,12 @@ exports.messageCreate = messageCreate;
 const messageFeedback = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     if (!id)
-        res.status(400).json({ error: 'Id not found' });
+        res.status(400).json({ error: "Id not found" });
     const { feedback } = req.body;
     try {
         const message = yield models_1.Message.findOneAndUpdate({ _id: id }, { feedback });
         if (!message) {
-            res.status(404).send('Message not found');
+            res.status(404).send("Message not found");
             return;
         }
         res.status(201).json({ message });
@@ -63,36 +59,14 @@ const messageFeedback = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.messageFeedback = messageFeedback;
-const callToLlama2 = (question, history) => __awaiter(void 0, void 0, void 0, function* () {
+const callToLlama = (question_1, history_1, ...args_1) => __awaiter(void 0, [question_1, history_1, ...args_1], void 0, function* (question, history, maxToken = 48) {
     try {
-        const response = yield axios_1.default.post(env_1.default.llamaApi, {
-            inputs: (0, exports.buildMessage)(question, history).replace(/\n/g, ''),
-            parameters: {
-                max_new_tokens: 48,
-                top_p: 0.9,
-                temperature: 0.6,
-            },
-        }, {
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-            },
-        });
-        const rawResponse = response.data.split('<|end_header_id|>');
-        return rawResponse[rawResponse.length - 1].replace(/\n/g, '');
+        const res = yield (0, huggingFace_1.callHfLlama3)([...history, { role: message_1.EMessageRole.USER, content: question }], 64);
+        console.log(res);
+        return (0, utils_1.removeTextInsideAsterisks)(res[0].content || "");
     }
     catch (err) {
-        console.log(err, 'error');
+        console.log(err, "error");
     }
 });
-exports.callToLlama2 = callToLlama2;
-const buildMessage = (question, history) => {
-    return `<|begin_of_text|><|start_header_id|>system<|end_header_id|>${history[0].content}
-  ${history
-        .filter((message) => message.role === message_1.EMessageRole.SYSTEM)
-        .map((message) => message.role === message_1.EMessageRole.USER
-        ? `<|eot_id|><|start_header_id|>user<|end_header_id|>${message.content}`
-        : `<|eot_id|><|start_header_id|>assistant<|end_header_id|>${message.content}`)}<|eot_id|><|start_header_id|>user<|end_header_id|>${question}<|eot_id|><|start_header_id|>assistant<|end_header_id|>`;
-};
-exports.buildMessage = buildMessage;
+exports.callToLlama = callToLlama;

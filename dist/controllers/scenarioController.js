@@ -8,58 +8,87 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateScenario = void 0;
-const scenario_1 = __importDefault(require("../models/scenario"));
-const user_1 = require("../types/user");
+const huggingFace_1 = require("../utils/huggingFace");
+const message_1 = require("../types/message");
+const models_1 = require("../models");
 const generateScenario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { patientName, gender } = req.body;
+    var _a;
+    const { patientName, gender, presentingComplaint, clinicalContext, medicalHistory, occupation, lifeStyle, emotionalState, personalTraits, communicationStyle, objectiveForStudent, } = req.body;
     try {
-        // const response = await axios.post(
-        //   env.llamaApi,
-        //   {
-        //     inputs:
-        //       "<|begin_of_text|><|start_header_id|>user<|end_header_id|>You are a robot that only outputs JSON. You reply in JSON format with the field 'patientName', 'dateOfBirth', 'gender', 'medicalHistory', 'symptoms', 'lifeStyle'. Example question: Generate dentist patient record with these fields? Example answer: {'patientName': 'Peter Pan', 'dateOfBirth': '14 Jul 2002', 'gender': 'Male', 'lifeStyle': ''} Now here is my question: Generate a relistic dentist patient record.<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
-        //     parameters: {
-        //       max_new_tokens: 96,
-        //       top_p: 0.9,
-        //       temperature: 0.6,
-        //     },
-        //   },
-        //   {
-        //     headers: {
-        //       Accept: 'application/json',
-        //       'Content-Type': 'application/json',
-        //       'Access-Control-Allow-Origin': '*',
-        //     },
-        //   }
-        // );
-        // const responseData = response.data.split('<|end_header_id|>');
-        // const parseValue = responseData[responseData.length - 1].replace(/\n/g, '');
-        // const params = {
-        //   ...JSON.parse(parseValue),
-        //   patientName,
-        //   gender,
-        // };
-        const mockParams = {
-            patientName,
-            dateOfBirth: "16/9/2005",
-            gender: user_1.IGender.FEMALE,
-            medicalHistory: 'None',
-            symptoms: 'Nib',
-            lifeStyle: '',
-        };
-        const scenario = new scenario_1.default(mockParams);
-        const saved = yield scenario.save();
-        setTimeout(() => {
+        const response = yield (0, huggingFace_1.callHfLlama3)([
+            {
+                role: message_1.EMessageRole.SYSTEM,
+                content: buildScenarioTemplate(),
+            },
+        ], 512);
+        const data = ((_a = response[0]) === null || _a === void 0 ? void 0 : _a.content) || "";
+        try {
+            const jsonRes = JSON.parse(data);
+            const scenario = new models_1.Scenario({
+                patientName: patientName || (jsonRes === null || jsonRes === void 0 ? void 0 : jsonRes.patientName),
+                gender: gender || (jsonRes === null || jsonRes === void 0 ? void 0 : jsonRes.gender),
+                dateOfBirth: jsonRes === null || jsonRes === void 0 ? void 0 : jsonRes.dateOfBirth,
+                occupation: occupation || (jsonRes === null || jsonRes === void 0 ? void 0 : jsonRes.occupation),
+                presentingComplaint: presentingComplaint || (jsonRes === null || jsonRes === void 0 ? void 0 : jsonRes.presentingComplaint),
+                medicalHistory: medicalHistory || (jsonRes === null || jsonRes === void 0 ? void 0 : jsonRes.medicalHistory),
+                lifeStyle: lifeStyle || (jsonRes === null || jsonRes === void 0 ? void 0 : jsonRes.lifeStyle),
+                emotionalState: emotionalState || (jsonRes === null || jsonRes === void 0 ? void 0 : jsonRes.emotionalState),
+                personalTraits: personalTraits || (jsonRes === null || jsonRes === void 0 ? void 0 : jsonRes.personalTraits),
+                communicationStyle: communicationStyle || (jsonRes === null || jsonRes === void 0 ? void 0 : jsonRes.communicationStyle),
+                clinicalContext: clinicalContext || (jsonRes === null || jsonRes === void 0 ? void 0 : jsonRes.clinicalContext),
+            });
+            const saved = yield scenario.save();
             res.status(201).json(saved);
-        }, 1000);
+            return;
+        }
+        catch (e) {
+            res.status(404).json({});
+            return;
+        }
     }
     catch (err) {
-        console.log(err, 'error');
+        console.log(err, "error");
     }
 });
 exports.generateScenario = generateScenario;
+const buildScenarioTemplate = () => {
+    const index = Math.floor(Math.random() * 50) + 1;
+    return `
+    Return as a JSON object.
+    Your responses must strictly adhere to the following structure:
+
+    {
+      "patientName": "<Full name of the patient>",
+      "dateOfBirth": "<Date in DD MMM YYYY format>",
+      "gender": "<Male, Female, or Other>",
+      "occupation": "<A random occupation>",
+      "presentingComplaint": "<Reason the patient visits the dentist>",
+      "medicalHistory": "<Brief description of medical history>",
+      "lifeStyle": "<Details about the patient's diet, smoking habits, and physical activity>",
+      "emotionalState": "<Patient's emotional state>",
+      "personalTraits": "<Patient's personality traits>",
+      "communicationStyle": "<Patient's communication style>",
+      "clinicalContext": "<Details about the patient's past dental visits or related history>"
+    }
+
+    Example question: Generate a dentist patient record with these fields. 
+    Example answer ${index}:
+    {
+      "patientName": "Emily Chen",
+      "dateOfBirth": "12 Mar 1995",
+      "gender": "Female",
+      "occupation": "Teacher",
+      "presentingComplaint": "Gum bleeding and sensitivity to cold drinks",
+      "medicalHistory": "Gum disease, dental fillings",
+      "lifeStyle": "Balanced diet, non-smoker, regular exercise",
+      "emotionalState": "Nervous",
+      "personalTraits": "Polite and reserved",
+      "communicationStyle": "Indirect and hesitant",
+      "clinicalContext": "Regular checkups every six months, treated for gum disease last year"
+    }
+
+    Now here is my question: Generate a realistic and unique dentist patient record.
+  `;
+};

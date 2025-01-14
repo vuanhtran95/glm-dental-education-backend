@@ -28,6 +28,10 @@ const dialogCreate = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const savedDialog = yield dialog.save();
         // Create context for dialog based on scenario
         const scenario = yield models_1.Scenario.findById(scenarioId);
+        if (!scenario) {
+            res.status(404);
+            return;
+        }
         const systemContextMessage = new models_1.Message({
             role: message_1.EMessageRole.SYSTEM,
             content: (0, utils_1.buildDialogContext)(scenario),
@@ -49,30 +53,30 @@ const dialogGetList = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const dialogs = yield dialog_1.default.aggregate([
             {
                 $match: userId
-                    ? { createdUserId: userId ? new mongodb_1.ObjectId(id) : '' }
+                    ? { createdUserId: userId ? new mongodb_1.ObjectId(id) : "" }
                     : { isSubmitted: true },
             },
             {
                 $lookup: {
-                    from: 'scenarios',
-                    localField: 'scenarioId',
-                    foreignField: '_id',
-                    as: 'scenario',
+                    from: "scenarios",
+                    localField: "scenarioId",
+                    foreignField: "_id",
+                    as: "scenario",
                 },
             },
             {
-                $unwind: '$scenario',
+                $unwind: "$scenario",
             },
             {
                 $lookup: {
-                    from: 'users',
-                    localField: 'createdUserId',
-                    foreignField: '_id',
-                    as: 'user',
+                    from: "users",
+                    localField: "createdUserId",
+                    foreignField: "_id",
+                    as: "user",
                 },
             },
             {
-                $unwind: '$user',
+                $unwind: "$user",
             },
             { $sort: { createdAt: -1 } },
         ]);
@@ -87,7 +91,7 @@ exports.dialogGetList = dialogGetList;
 const dialogGetDetail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     if (!id)
-        res.status(400).json({ error: 'Id not found' });
+        res.status(400).json({ error: "Id not found" });
     try {
         const dialog = yield dialog_1.default.findById(id);
         const scenario = yield models_1.Scenario.findById(dialog === null || dialog === void 0 ? void 0 : dialog.scenarioId);
@@ -104,11 +108,11 @@ exports.dialogGetDetail = dialogGetDetail;
 const dialogEnd = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     if (!id)
-        res.status(400).json({ error: 'Id not found' });
+        res.status(400).json({ error: "Id not found" });
     try {
         const dialog = yield dialog_1.default.findOneAndUpdate({ _id: id }, { isEnded: true });
         if (!dialog) {
-            res.status(404).send('Dialog not found');
+            res.status(404).send("Dialog not found");
             return;
         }
         res.status(201).json({});
@@ -122,11 +126,11 @@ exports.dialogEnd = dialogEnd;
 const dialogSubmit = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     if (!id)
-        res.status(400).json({ error: 'Id not found' });
+        res.status(400).json({ error: "Id not found" });
     try {
         const dialog = yield dialog_1.default.findOneAndUpdate({ _id: id }, { isSubmitted: true });
         if (!dialog) {
-            res.status(404).send('Dialog not found');
+            res.status(404).send("Dialog not found");
             return;
         }
         res.status(201).json({});
@@ -140,12 +144,12 @@ exports.dialogSubmit = dialogSubmit;
 const dialogFeedback = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     if (!id)
-        res.status(400).json({ error: 'Id not found' });
+        res.status(400).json({ error: "Id not found" });
     const { feedback } = req.body;
     try {
         const dialog = yield dialog_1.default.findOneAndUpdate({ _id: id }, { feedback });
         if (!dialog) {
-            res.status(404).send('Dialog not found');
+            res.status(404).send("Dialog not found");
             return;
         }
         res.status(201).json({});
