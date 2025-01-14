@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import Scenario from "../models/scenario";
-import { IScenario } from "../types/scenario";
-import { IGender } from "../types/user";
+import { callHfLlama3 } from "../utils/huggingFace";
+import { EMessageRole } from "../types/message";
+import { Scenario } from "../models";
 
 export const generateScenario = async (req: Request, res: Response) => {
   const {
@@ -19,89 +19,87 @@ export const generateScenario = async (req: Request, res: Response) => {
   } = req.body;
 
   try {
-    // const response = await axios.post(
-    //   env.llamaApi,
-    //   {
-    //     inputs:
-    //       "<|begin_of_text|><|start_header_id|>user<|end_header_id|>You are a robot that only outputs JSON. You reply in JSON format with the field 'patientName', 'dateOfBirth', 'gender', 'medicalHistory', 'symptoms', 'lifeStyle'. Example question: Generate dentist patient record with these fields? Example answer: {'patientName': 'Peter Pan', 'dateOfBirth': '14 Jul 2002', 'gender': 'Male', 'lifeStyle': ''} Now here is my question: Generate a relistic dentist patient record.<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
-    //     parameters: {
-    //       max_new_tokens: 96,
-    //       top_p: 0.9,
-    //       temperature: 0.6,
-    //     },
-    //   },
-    //   {
-    //     headers: {
-    //       Accept: 'application/json',
-    //       'Content-Type': 'application/json',
-    //       'Access-Control-Allow-Origin': '*',
-    //     },
-    //   }
-    // );
+    const response = await callHfLlama3(
+      [
+        {
+          role: EMessageRole.SYSTEM,
+          content: buildScenarioTemplate(),
+        },
+      ],
+      512
+    );
 
-    // const responseData = response.data.split('<|end_header_id|>');
+    const data = response[0]?.content || "";
 
-    // const parseValue = responseData[responseData.length - 1].replace(/\n/g, '');
+    try {
+      const jsonRes = JSON.parse(data);
 
-    // const params = {
-    //   ...JSON.parse(parseValue),
-    //   patientName,
-    //   gender,
-    // };
+      const scenario = new Scenario({
+        patientName: patientName || jsonRes?.patientName,
+        gender: gender || jsonRes?.gender,
+        dateOfBirth: jsonRes?.dateOfBirth,
+        occupation: occupation || jsonRes?.occupation,
 
-    function getRandomElement<T>(array: T[]): T {
-      return array[Math.floor(Math.random() * array.length)];
+        presentingComplaint:
+          presentingComplaint || jsonRes?.presentingComplaint,
+        medicalHistory: medicalHistory || jsonRes?.medicalHistory,
+        lifeStyle: lifeStyle || jsonRes?.lifeStyle,
+
+        emotionalState: emotionalState || jsonRes?.emotionalState,
+        personalTraits: personalTraits || jsonRes?.personalTraits,
+        communicationStyle: communicationStyle || jsonRes?.communicationStyle,
+
+        clinicalContext: clinicalContext || jsonRes?.clinicalContext,
+      });
+      const saved = await scenario.save();
+      res.status(201).json(saved);
+      return;
+    } catch (e) {
+      res.status(404).json({});
+      return;
     }
-
-    const mockParams: IScenario = {
-      // General
-      patientName,
-      dateOfBirth: "16/9/2005",
-      gender,
-      occupation:
-        occupation ||
-        getRandomElement(["Teacher", "Software Engineer", "Retired"]),
-
-      // Context
-      presentingComplaint:
-        presentingComplaint || "Toothache in the lower left molar region.",
-      medicalHistory:
-        medicalHistory ||
-        getRandomElement([
-          "Diabetes",
-          "Hypertension",
-          "No significant history",
-        ]),
-      lifeStyle:
-        lifeStyle ||
-        getRandomElement([
-          "Healthy lifestyle with occasional exercise",
-          "Consumes fast food regularly, irregular oral hygiene",
-        ]),
-
-      // Additional
-      clinicalContext: clinicalContext || "Patient is experiencing oral pain.",
-
-      // Personality and communication:
-      emotionalState:
-        emotionalState || getRandomElement(["Nervous", "Calm", "Irritated"]),
-      personalTraits:
-        personalTraits ||
-        getRandomElement(["Talkative", "Reserved", "Skeptical"]),
-      communicationStyle:
-        communicationStyle ||
-        getRandomElement(["Direct", "Hesitant", "Inquisitive"]),
-
-      // Objective
-      objectiveForStudent:
-        objectiveForStudent ||
-        "Build rapport and provide appropriate treatment recommendations.",
-    };
-
-    const scenario = new Scenario(mockParams);
-    const saved = await scenario.save();
-    res.status(201).json(saved);
   } catch (err) {
     console.log(err, "error");
   }
+};
+
+const buildScenarioTemplate = () => {
+  const index = Math.floor(Math.random() * 50) + 1;
+
+  return `
+    Return as a JSON object.
+    Your responses must strictly adhere to the following structure:
+
+    {
+      "patientName": "<Full name of the patient>",
+      "dateOfBirth": "<Date in DD MMM YYYY format>",
+      "gender": "<Male, Female, or Other>",
+      "occupation": "<A random occupation>",
+      "presentingComplaint": "<Reason the patient visits the dentist>",
+      "medicalHistory": "<Brief description of medical history>",
+      "lifeStyle": "<Details about the patient's diet, smoking habits, and physical activity>",
+      "emotionalState": "<Patient's emotional state>",
+      "personalTraits": "<Patient's personality traits>",
+      "communicationStyle": "<Patient's communication style>",
+      "clinicalContext": "<Details about the patient's past dental visits or related history>"
+    }
+
+    Example question: Generate a dentist patient record with these fields. 
+    Example answer ${index}:
+    {
+      "patientName": "Emily Chen",
+      "dateOfBirth": "12 Mar 1995",
+      "gender": "Female",
+      "occupation": "Teacher",
+      "presentingComplaint": "Gum bleeding and sensitivity to cold drinks",
+      "medicalHistory": "Gum disease, dental fillings",
+      "lifeStyle": "Balanced diet, non-smoker, regular exercise",
+      "emotionalState": "Nervous",
+      "personalTraits": "Polite and reserved",
+      "communicationStyle": "Indirect and hesitant",
+      "clinicalContext": "Regular checkups every six months, treated for gum disease last year"
+    }
+
+    Now here is my question: Generate a realistic and unique dentist patient record.
+  `;
 };
