@@ -62,5 +62,6 @@ export const removeTextInsideAsterisks = (inputString: string) => {
   return inputString
     .replace(/\*.*?\*/g, "")
     .replace(/\(.*?\)/g, "")
-    .replace(regex, "");
+    .replace(regex, "")
+    .replace(/\.{3}/g, ".");
 };
