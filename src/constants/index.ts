@@ -7,4 +7,4 @@ export const ERROR_RESPONSE = {
   SERVER_ERROR: { error: "Server error" },
 };
 
-export const verbosityLevelMapping = [24, 48, 64, 72, 96, 128];
+export const verbosityLevelMapping = [24, 48, 60, 72, 84, 96];
