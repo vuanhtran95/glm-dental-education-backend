@@ -45,9 +45,9 @@ const scenarioSchema: Schema = new Schema<IScenario>({
     type: String,
     required: false,
   },
-  communicationStyle: {
-    type: String,
-    required: false,
+  verbosityLevel: {
+    type: Number,
+    required: true,
   },
 
   // Additional

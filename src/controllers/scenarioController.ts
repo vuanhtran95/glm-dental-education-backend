@@ -3,12 +3,15 @@ import { callHfLlama3 } from "../utils/huggingFace";
 import { EMessageRole } from "../types/message";
 import { Scenario } from "../models";
 
+const MAX_TOKEN_BUILD_SCENARIO = 512;
+
 export const generateScenario = async (req: Request, res: Response) => {
   const {
     // general
     patientName,
     gender,
     // clinical
+    verbosityLevel,
     presentingComplaint,
     emotionalState,
     clinicalContext,
@@ -21,12 +24,11 @@ export const generateScenario = async (req: Request, res: Response) => {
           role: EMessageRole.SYSTEM,
           content: buildScenarioTemplate({
             presentingComplaint,
-            emotionalState,
             clinicalContext,
           }),
         },
       ],
-      512
+      MAX_TOKEN_BUILD_SCENARIO
     );
 
     const data = response[0]?.content || "";
@@ -45,9 +47,9 @@ export const generateScenario = async (req: Request, res: Response) => {
         medicalHistory: jsonRes?.medicalHistory,
         lifeStyle: jsonRes?.lifeStyle,
 
-        emotionalState: emotionalState || jsonRes?.emotionalState,
+        emotionalState: emotionalState,
         personalTraits: jsonRes?.personalTraits,
-        communicationStyle: jsonRes?.communicationStyle,
+        verbosityLevel: verbosityLevel,
 
         clinicalContext: clinicalContext || jsonRes?.clinicalContext,
       });
@@ -65,11 +67,9 @@ export const generateScenario = async (req: Request, res: Response) => {
 
 const buildScenarioTemplate = ({
   presentingComplaint,
-  emotionalState,
   clinicalContext,
 }: {
   presentingComplaint: string;
-  emotionalState: string;
   clinicalContext: string;
 }) => {
   const index = Math.floor(Math.random() * 50) + 1;
@@ -78,7 +78,6 @@ const buildScenarioTemplate = ({
     Return as a JSON object.
     Your responses must strictly adhere to the following structure.
     The patient has Presenting Complaint ${presentingComplaint}
-    The patient has Emotional State ${emotionalState}
     The patient has Clinical Context ${clinicalContext}
 
     {
@@ -89,9 +88,7 @@ const buildScenarioTemplate = ({
       "presentingComplaint": "<Reason the patient visits the dentist>",
       "medicalHistory": "<Brief description of medical history>",
       "lifeStyle": "<Details about the patient's diet, smoking habits, and physical activity>",
-      "emotionalState": "<Patient's emotional state>",
       "personalTraits": "<Patient's personality traits>",
-      "communicationStyle": "<Patient's communication style>",
       "clinicalContext": "<Details about the patient's past dental visits or related history>"
     }
 
@@ -105,9 +102,7 @@ const buildScenarioTemplate = ({
       "presentingComplaint": "Gum bleeding and sensitivity to cold drinks",
       "medicalHistory": "Gum disease, dental fillings",
       "lifeStyle": "Balanced diet, non-smoker, regular exercise",
-      "emotionalState": "Nervous",
       "personalTraits": "Polite and reserved",
-      "communicationStyle": "Indirect and hesitant",
       "clinicalContext": "Regular checkups every six months, treated for gum disease last year"
     }
 

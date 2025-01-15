@@ -13,7 +13,6 @@ export const buildDialogContext = ({
   // Personal
   emotionalState,
   personalTraits,
-  communicationStyle,
   // Additional
   clinicalContext,
   objectiveForStudent,
@@ -35,7 +34,6 @@ export const buildDialogContext = ({
     ### Personality and Communication:
     - **Emotional State**: ${emotionalState || "Neutral"}.
     - **Personality Traits**: ${personalTraits || "Not specified"}.
-    - **Communication Style**: ${communicationStyle || "Not specified"}.
 
     ### Clinical Context:
     ${
@@ -63,5 +61,22 @@ export const removeTextInsideAsterisks = (inputString: string) => {
     .replace(/\*.*?\*/g, "")
     .replace(/\(.*?\)/g, "")
     .replace(regex, "")
-    .replace(/\.{3}/g, ".");
+    .replace(/\.{3}/g, ".")
+    .replace(/\?/g, ".")
+    .replace(/\.{2,}/g, ".");
 };
+
+export function removeIncompleteLastSentence(input: string) {
+  // Split the input into sentences based on punctuation
+  const sentences = input.match(/[^.!?]+[.!?]*/g);
+
+  if (!sentences) return input; // Return as is if no sentences are detected
+
+  // Check if the last sentence ends with proper punctuation
+  const lastSentence = sentences[sentences.length - 1];
+  if (!/[.!?]$/.test(lastSentence.trim())) {
+    sentences.pop(); // Remove the last sentence if it is incomplete
+  }
+
+  return sentences.join(" ").trim(); // Join the sentences back
+}

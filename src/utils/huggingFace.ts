@@ -6,7 +6,7 @@ const client = new HfInference(env.hfToken);
 
 export const callHfLlama3 = async function (
   messages: LlamaMessage[],
-  maxToken: number = 100
+  maxToken: number
 ): Promise<LlamaMessage[]> {
   const chat = await client.chatCompletion({
     model: env.hfModel,

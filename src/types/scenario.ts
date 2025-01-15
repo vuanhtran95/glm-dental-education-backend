@@ -15,7 +15,7 @@ export interface IScenario {
   // Personal
   emotionalState: string;
   personalTraits: string;
-  communicationStyle: string;
+  verbosityLevel: number;
 
   // Additional
   clinicalContext: string;

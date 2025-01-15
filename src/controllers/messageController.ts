@@ -1,19 +1,30 @@
 import { Request, Response } from "express";
-import { Message } from "../models";
-import { ERROR_RESPONSE } from "../constants";
+import { Dialog, Message, Scenario } from "../models";
+import { ERROR_RESPONSE, verbosityLevelMapping } from "../constants";
 import { EMessageRole, LlamaMessage } from "../types/message";
 import { callHfLlama3 } from "../utils/huggingFace";
-import { removeTextInsideAsterisks } from "../utils";
+import {
+  removeIncompleteLastSentence,
+  removeTextInsideAsterisks,
+} from "../utils";
 
 export const messageCreate = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { message, dialogId } = req.body;
+  const { message, dialogId }: { message: any; dialogId: string } = req.body;
 
   const messages = await Message.find({ dialogId });
 
-  const assistantMessage = await callToLlama(message.content, messages);
+  const dialog = await Dialog.findById(dialogId);
+
+  const scenario = await Scenario.findById(dialog?.scenarioId);
+
+  const assistantMessage = await callToLlama(
+    message.content,
+    messages,
+    verbosityLevelMapping[scenario?.verbosityLevel || 1]
+  );
 
   const payload = [
     {
@@ -69,11 +80,12 @@ export const callToLlama = async (
   try {
     const res = await callHfLlama3(
       [...history, { role: EMessageRole.USER, content: question }],
-      64
+      maxToken
     );
 
-    console.log(res);
-    return removeTextInsideAsterisks(res[0].content || "");
+    return removeIncompleteLastSentence(
+      removeTextInsideAsterisks(res[0].content || "")
+    );
   } catch (err) {
     console.log(err, "error");
   }
