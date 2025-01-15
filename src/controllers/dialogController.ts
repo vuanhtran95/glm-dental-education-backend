@@ -5,7 +5,6 @@ import { Message, Scenario, User } from "../models";
 import { EMessageRole } from "../types/message";
 import { buildDialogContext } from "../utils";
 import { IScenario } from "../types/scenario";
-import mongoose, { Schema } from "mongoose";
 
 export const dialogCreate = async (
   req: Request,

@@ -5,17 +5,13 @@ import { Scenario } from "../models";
 
 export const generateScenario = async (req: Request, res: Response) => {
   const {
+    // general
     patientName,
     gender,
+    // clinical
     presentingComplaint,
-    clinicalContext,
-    medicalHistory,
-    occupation,
-    lifeStyle,
     emotionalState,
-    personalTraits,
-    communicationStyle,
-    objectiveForStudent,
+    clinicalContext,
   } = req.body;
 
   try {
@@ -23,7 +19,11 @@ export const generateScenario = async (req: Request, res: Response) => {
       [
         {
           role: EMessageRole.SYSTEM,
-          content: buildScenarioTemplate(),
+          content: buildScenarioTemplate({
+            presentingComplaint,
+            emotionalState,
+            clinicalContext,
+          }),
         },
       ],
       512
@@ -38,16 +38,16 @@ export const generateScenario = async (req: Request, res: Response) => {
         patientName: patientName || jsonRes?.patientName,
         gender: gender || jsonRes?.gender,
         dateOfBirth: jsonRes?.dateOfBirth,
-        occupation: occupation || jsonRes?.occupation,
+        occupation: jsonRes?.occupation,
 
         presentingComplaint:
           presentingComplaint || jsonRes?.presentingComplaint,
-        medicalHistory: medicalHistory || jsonRes?.medicalHistory,
-        lifeStyle: lifeStyle || jsonRes?.lifeStyle,
+        medicalHistory: jsonRes?.medicalHistory,
+        lifeStyle: jsonRes?.lifeStyle,
 
         emotionalState: emotionalState || jsonRes?.emotionalState,
-        personalTraits: personalTraits || jsonRes?.personalTraits,
-        communicationStyle: communicationStyle || jsonRes?.communicationStyle,
+        personalTraits: jsonRes?.personalTraits,
+        communicationStyle: jsonRes?.communicationStyle,
 
         clinicalContext: clinicalContext || jsonRes?.clinicalContext,
       });
@@ -63,12 +63,23 @@ export const generateScenario = async (req: Request, res: Response) => {
   }
 };
 
-const buildScenarioTemplate = () => {
+const buildScenarioTemplate = ({
+  presentingComplaint,
+  emotionalState,
+  clinicalContext,
+}: {
+  presentingComplaint: string;
+  emotionalState: string;
+  clinicalContext: string;
+}) => {
   const index = Math.floor(Math.random() * 50) + 1;
 
   return `
     Return as a JSON object.
-    Your responses must strictly adhere to the following structure:
+    Your responses must strictly adhere to the following structure.
+    The patient has Presenting Complaint ${presentingComplaint}
+    The patient has Emotional State ${emotionalState}
+    The patient has Clinical Context ${clinicalContext}
 
     {
       "patientName": "<Full name of the patient>",
