@@ -24,8 +24,7 @@ export const estimateTokens = (text: string) => {
   return Math.ceil(text.split(/\s+/).length * 1.3); // Approximate token count
 };
 
-export const getMaxTokens = (userInput: string, context = "") => {
+export const getMaxTokens = (userInput: string) => {
   const inputTokens = estimateTokens(userInput);
-  const contextTokens = estimateTokens(context);
-  return Math.max(50, MAX_MODEL_TOKENS - inputTokens - contextTokens - 50); // Buffer to avoid overflow
+  return inputTokens * 3; // Buffer to avoid overflow
 };

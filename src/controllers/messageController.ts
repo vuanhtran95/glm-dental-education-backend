@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Dialog, Message, Scenario } from "../models";
 import { ERROR_RESPONSE, verbosityLevelMapping } from "../constants";
 import { EMessageRole, LlamaMessage } from "../types/message";
-import { callHfLlama3 } from "../utils/huggingFace";
+import { callHfLlama3, getMaxTokens } from "../utils/huggingFace";
 import {
   removeIncompleteLastSentence,
   removeTextInsideAsterisks,
@@ -20,10 +20,12 @@ export const messageCreate = async (
 
   const scenario = await Scenario.findById(dialog?.scenarioId);
 
+  const maxToken = getMaxTokens(message.content);
+
   const assistantMessage = await callToLlama(
     message.content,
     messages,
-    verbosityLevelMapping[scenario?.verbosityLevel || 1]
+    Math.min(verbosityLevelMapping[scenario?.verbosityLevel || 1], maxToken)
   );
 
   const payload = [
