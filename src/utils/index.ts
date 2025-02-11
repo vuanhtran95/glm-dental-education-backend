@@ -52,6 +52,7 @@ export const buildDialogContext = ({
     - Be consistent with the assigned emotional and personality traits.
     - Adapt to the student's level of professionalism and clinical reasoning.
     - If the student struggles, respond with hints or simple prompts to help guide them.
+    - Always be patient, not dentist
   `;
 };
 
