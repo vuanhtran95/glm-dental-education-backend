@@ -57,7 +57,7 @@ export const generateScenario = async (req: Request, res: Response) => {
       res.status(201).json(saved);
       return;
     } catch (e) {
-      res.status(404).json({});
+      res.status(404).json({ message: e });
       return;
     }
   } catch (err) {

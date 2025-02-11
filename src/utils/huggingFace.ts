@@ -12,7 +12,20 @@ export const callHfLlama3 = async function (
     model: env.hfModel,
     messages,
     max_tokens: maxToken,
+    provider: "hf-inference",
   });
 
   return chat.choices.map((e) => e.message);
+};
+
+const MAX_MODEL_TOKENS = 4096; // Adjust based on the model you use
+
+export const estimateTokens = (text: string) => {
+  return Math.ceil(text.split(/\s+/).length * 1.3); // Approximate token count
+};
+
+export const getMaxTokens = (userInput: string, context = "") => {
+  const inputTokens = estimateTokens(userInput);
+  const contextTokens = estimateTokens(context);
+  return Math.max(50, MAX_MODEL_TOKENS - inputTokens - contextTokens - 50); // Buffer to avoid overflow
 };
