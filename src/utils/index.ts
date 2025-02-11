@@ -68,6 +68,8 @@ export const removeTextInsideAsterisks = (inputString: string) => {
 };
 
 export function removeIncompleteLastSentence(input: string) {
+  if (!input.includes(".")) return input;
+
   // Split the input into sentences based on punctuation
   const sentences = input.match(/[^.!?]+[.!?]*/g);
 
@@ -79,5 +81,9 @@ export function removeIncompleteLastSentence(input: string) {
     sentences.pop(); // Remove the last sentence if it is incomplete
   }
 
-  return sentences.join(" ").trim(); // Join the sentences back
+  const result = sentences.join(" ").trim();
+
+  console.log(result, "result");
+
+  return result; // Join the sentences back
 }

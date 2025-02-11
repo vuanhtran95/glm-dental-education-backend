@@ -5,11 +5,14 @@ import { LlamaMessage } from "../types/message";
 const client = new HfInference(env.hfToken);
 
 export const callHfLlama3 = async function (
+  model: string,
   messages: LlamaMessage[],
   maxToken: number
 ): Promise<LlamaMessage[]> {
+  console.log(model, "model");
+
   const chat = await client.chatCompletion({
-    model: env.hfModel,
+    model,
     messages,
     max_tokens: maxToken,
     provider: "hf-inference",
@@ -26,5 +29,8 @@ export const estimateTokens = (text: string) => {
 
 export const getMaxTokens = (userInput: string) => {
   const inputTokens = estimateTokens(userInput);
-  return inputTokens * 3; // Buffer to avoid overflow
+
+  console.log(inputTokens, "inputTokens");
+
+  return inputTokens * 8; // Buffer to avoid overflow
 };

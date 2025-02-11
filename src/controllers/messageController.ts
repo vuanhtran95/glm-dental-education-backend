@@ -7,6 +7,7 @@ import {
   removeIncompleteLastSentence,
   removeTextInsideAsterisks,
 } from "../utils";
+import env from "../config/env";
 
 export const messageCreate = async (
   req: Request,
@@ -47,6 +48,8 @@ export const messageCreate = async (
 
     res.status(201).json({ message });
   } catch (err) {
+    console.log(err, "err");
+
     res.status(400).json(ERROR_RESPONSE.SERVER_ERROR);
   }
 };
@@ -81,6 +84,7 @@ export const callToLlama = async (
 ) => {
   try {
     const res = await callHfLlama3(
+      env.hfModelChat,
       [...history, { role: EMessageRole.USER, content: question }],
       maxToken
     );

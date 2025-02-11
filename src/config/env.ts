@@ -12,7 +12,8 @@ const env = {
   awsRegion: process.env.AWS_REGION || "",
   s3BucketName: process.env.S3_BUCKET_NAME || "",
   hfToken: process.env.HF_TOKEN || "",
-  hfModel: process.env.HF_MODEL || "",
+  hfModelChat: process.env.HF_MODEL_CHAT || "",
+  hfModelGenerate: process.env.HF_MODEL_GENERATE || "",
 };
 
 export default env;

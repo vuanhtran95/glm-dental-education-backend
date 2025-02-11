@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { callHfLlama3 } from "../utils/huggingFace";
 import { EMessageRole } from "../types/message";
 import { Scenario } from "../models";
+import env from "../config/env";
 
 const MAX_TOKEN_BUILD_SCENARIO = 512;
 
@@ -19,6 +20,7 @@ export const generateScenario = async (req: Request, res: Response) => {
 
   try {
     const response = await callHfLlama3(
+      env.hfModelGenerate,
       [
         {
           role: EMessageRole.SYSTEM,
